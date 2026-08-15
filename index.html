@@ -85,24 +85,28 @@
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
                 
                 <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Polling database secure nodes...</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Connecting data layers...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co";
+        const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
 
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('statusNotification');
+            
+            btn.innerText = "Processing Judgment Parameters...";
+            btn.style.background = "#64748b";
             statusBox.style.display = "block";
             statusBox.style.background = "#1e293b";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Processing genesis baseline parameters...";
+            statusBox.innerText = "Transmitting genesis array to backend matrix...";
 
             const payload = {
                 title: document.getElementById('projectTitle').value,
@@ -113,18 +117,25 @@
             };
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases`, {
+                // We add the apikey explicitly inside the URL params to prevent new Supabase infrastructure authorization locks
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?apikey=${SUPABASE_ANON_KEY}`, {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                         'Content-Type': 'application/json',
                         'Prefer': 'return=representation'
                     },
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error("Database rejected submission. Make sure you completed Step 2 (SQL schema build).");
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(errText || `Server processing failure: ${response.status}`);
+                }
 
+                btn.innerText = "Certify and Protect Intent Layer";
+                btn.style.background = "var(--accent-blue)";
                 statusBox.style.background = "#064e3b";
                 statusBox.style.color = "#4ade80";
                 statusBox.innerText = "✅ Intent Documented! Case securely balanced in the database layer.";
@@ -133,9 +144,12 @@
                 loadCasesFromDatabase();
 
             } catch (error) {
+                btn.innerText = "Certify and Protect Intent Layer";
+                btn.style.background = "var(--accent-blue)";
                 statusBox.style.background = "#7f1d1d";
                 statusBox.style.color = "#f87171";
                 statusBox.innerText = `❌ Connection Error: ${error.message}`;
+                console.error("Transmission Trace:", error);
             }
         });
 
@@ -143,31 +157,17 @@
             const container = document.getElementById('casesDisplayContainer');
             
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc`, {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc&apikey=${SUPABASE_ANON_KEY}`, {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                         'Content-Type': 'application/json'
                     }
                 });
 
-                if (!response.ok) throw new Error("Could not connect to database table.");
+                if (!response.ok) throw new Error("Could not download sync state.");
                 
                 const data = await response.json();
                 
                 if(data.length === 0) {
-                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
-                    return;
-                }
-
-                container.innerHTML = ""; 
-                data.forEach(item => {
-                    const block = document.createElement('div');
-                    block.className = "case-item";
-                    block.innerHTML = `
-                        <div class="case-header">
-                            <span>📘 ${escapeHTML(item.title)}</span>
-                            <span style="color: #64748b; font-size: 0.8rem;">ID: #${item.id}</span>
-                        </div>
-                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">By: <b>${escapeHTML(item.creator)}</b></div>
-                        
