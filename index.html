@@ -20,21 +20,19 @@
         h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
         .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
         
-        /* Two Column Layout Grid */
         .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
         
         .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
         h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
         
-        /* Form Styling */
         label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
         input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
         textarea { height: 100px; resize: vertical; }
+        
         button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s; }
         button:hover { background: #7dd3fc; transform: translateY(-1px); }
         
-        /* Live Board Dynamic Items */
         .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
         .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
         .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
@@ -54,7 +52,6 @@
         </header>
 
         <div class="grid-layout">
-            <!-- LEFT COLUMN: CREATOR INPUT ENGINE -->
             <div class="card">
                 <h2>🛡️ Creator Defense Intake</h2>
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px;">Establish your human idea baseline prior to any secondary generative processing or false detector claims.</p>
@@ -75,12 +72,11 @@
                     <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
                     <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
 
-                    <button type="submit">Certify and Protect Intent Layer</button>
+                    <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
                 </form>
                 <div id="statusNotification" class="status-box"></div>
             </div>
 
-            <!-- RIGHT COLUMN: LIVE EXPERT JUDGE PANEL -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
                     <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
@@ -89,20 +85,16 @@
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
                 
                 <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">No active cases loaded. Click 'Refresh Cases' or input a claim to sync data layer...</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Polling database secure nodes...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Core Secure Database Routing Engine
-        const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co";
-        
-        // IMPORTANT: Swap the value below with your long public 'anon' key starting with 'eyJ...'
-        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+        const SUPABASE_URL = "https://supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
 
-        // ACTION A: POST DATA TO DATABASE
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -110,7 +102,7 @@
             statusBox.style.display = "block";
             statusBox.style.background = "#1e293b";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Encrypting genesis baseline array...";
+            statusBox.innerText = "Processing genesis baseline parameters...";
 
             const payload = {
                 title: document.getElementById('projectTitle').value,
@@ -125,46 +117,41 @@
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                         'Content-Type': 'application/json',
                         'Prefer': 'return=representation'
                     },
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error(`Database rejected structure. Ensure SQL setup is run.`);
+                if (!response.ok) throw new Error("Database rejected submission. Make sure you completed Step 2 (SQL schema build).");
 
                 statusBox.style.background = "#064e3b";
-                statusBox.style.color = var(--accent-green);
+                statusBox.style.color = "#4ade80";
                 statusBox.innerText = "✅ Intent Documented! Case securely balanced in the database layer.";
                 document.getElementById('judgmentForm').reset();
                 
-                // Automatically update the view panel immediately on submission
                 loadCasesFromDatabase();
 
             } catch (error) {
                 statusBox.style.background = "#7f1d1d";
-                statusBox.style.color = var(--accent-red);
+                statusBox.style.color = "#f87171";
                 statusBox.innerText = `❌ Connection Error: ${error.message}`;
             }
         });
 
-        // ACTION B: FETCH DATA FROM DATABASE TO EXPERT LAYER
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
-            container.innerHTML = `<p style='color: #64748b; text-align: center;'>Polling secure nodes...</p>`;
             
             try {
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc`, {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
                         'Content-Type': 'application/json'
                     }
                 });
 
-                if (!response.ok) throw new Error("Could not pull records.");
+                if (!response.ok) throw new Error("Could not connect to database table.");
                 
                 const data = await response.json();
                 
@@ -173,3 +160,14 @@
                     return;
                 }
 
+                container.innerHTML = ""; 
+                data.forEach(item => {
+                    const block = document.createElement('div');
+                    block.className = "case-item";
+                    block.innerHTML = `
+                        <div class="case-header">
+                            <span>📘 ${escapeHTML(item.title)}</span>
+                            <span style="color: #64748b; font-size: 0.8rem;">ID: #${item.id}</span>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 10px;">By: <b>${escapeHTML(item.creator)}</b></div>
+                        
