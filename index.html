@@ -85,7 +85,7 @@
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
                 
                 <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure datastream matrices...</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure datastream nodes...</p>
                 </div>
             </div>
         </div>
@@ -105,9 +105,9 @@
             statusBox.style.display = "block";
             statusBox.style.background = "#151f32";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark via secure wrapper functions...";
+            statusBox.innerText = "Transmitting human concept parameters safely through database proxy...";
 
-            // Map inputs to match function parameters exactly
+            // Map standard web forms directly to internal RPC parameters
             const payload = {
                 p_title: document.getElementById('projectTitle').value,
                 p_creator: document.getElementById('creatorName').value,
@@ -117,7 +117,7 @@
             };
 
             try {
-                // Route call directly through the safe internal schema handler endpoint
+                // Route call straight to the interior database RPC method
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/add_fair_judgment_case`, {
                     method: 'POST',
                     headers: {
@@ -129,12 +129,12 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(errorText || `Network Response Error: ${response.status}`);
+                    throw new Error(errorText || `Network Sync Fault: ${response.status}`);
                 }
 
                 statusBox.style.background = "#064e3b";
                 statusBox.style.color = "#4ade80";
-                statusBox.innerText = "✅ Intent Documented! Case securely balanced in the database layer.";
+                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
                 document.getElementById('judgmentForm').reset();
                 
                 loadCasesFromDatabase();
@@ -142,8 +142,8 @@
             } catch (error) {
                 statusBox.style.background = "#7f1d1d";
                 statusBox.style.color = "#f87171";
-                statusBox.innerText = `❌ System Block: ${error.message}`;
-                console.error("Execution Exception:", error);
+                statusBox.innerText = `❌ Transmission Blocked: ${error.message}`;
+                console.error("Infrastructure Exception Trace:", error);
             } finally {
                 btn.innerText = "Certify and Protect Intent Layer";
             }
@@ -161,7 +161,7 @@
                     }
                 });
 
-                if (!response.ok) throw new Error("Connection dropped by database router.");
+                if (!response.ok) throw new Error("Sync dropped by project gateway.");
                 
                 const data = await response.json();
                 
@@ -175,4 +175,3 @@
                     const block = document.createElement('div');
                     block.className = "case-item";
                     block.innerHTML = `
-                        <div class="case-header">
