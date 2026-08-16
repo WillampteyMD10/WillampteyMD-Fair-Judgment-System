@@ -171,3 +171,34 @@
                             <span>📘 ${escapeHTML(item.title)}</span>
                             <span style="color: #64748b; font-size: 0.8rem;">ID: #${item.id}</span>
                         </div>
+<!-- This is your existing final tag from CodePen -->
+</div> 
+
+<!-- 1. ADD THIS LINE IMMEDIATELY UNDER THE DIV TO LOAD THE DATABASE ENGINE -->
+<script src="https://jsdelivr.net"></script>
+
+<!-- 2. ADD THIS SCRIPT PACK TO TALK TO YOUR UNPAUSED SUPABASE TIER -->
+<script>
+  // Get these exact values from your Supabase Dashboard -> Settings -> API
+  const SUPABASE_URL = "https://supabase.co"; 
+  const SUPABASE_ANON_KEY = "your-actual-anon-public-key";
+
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Core App Function: Capture the user's idea before AI processes it
+  async function saveHumanIdea(authorName, conceptualThought) {
+    const { data, error } = await supabase
+      .from('willamptey_judgement_logs')
+      .insert([{ author_name: authorName, original_concept: conceptualThought }]);
+
+    if (error) {
+      console.error("Database error:", error.message);
+    } else {
+      alert("Genesis Proof Captured! Your idea is officially timestamped.");
+    }
+  }
+</script>
+
+<!-- 3. ADD THESE CLOSING TAGS TO COMPLETE YOUR CODE FILES CORRECTLY -->
+</body>
+</html>
