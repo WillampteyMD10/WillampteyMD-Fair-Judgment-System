@@ -63,13 +63,13 @@
                     <label for="creatorName">Author / Original Creator Name</label>
                     <input type="text" id="creatorName" placeholder="Your Name or Pseudonym" required>
 
-                    <label for="humanGenesis" style="color: #4ade80;">1. Human Genesis (The Original Spark/Outline)</label>
+                    <label for="humanGenesis" style="color: var(--accent-green);">1. Human Genesis (The Original Spark/Outline)</label>
                     <textarea id="humanGenesis" placeholder="Describe the foundational concept or blueprint you structured BEFORE using any secondary tools..." required></textarea>
 
                     <label for="workerAI" style="color: #cbd5e1;">2. Worker AI Layer (Generative Enhancer)</label>
                     <textarea id="workerAI" placeholder="Paste structural details or text expanded via generative models..."></textarea>
 
-                    <label for="detectiveVerdict" style="color: #f87171;">3. Detective AI Stance (The Paranoid Accuser)</label>
+                    <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
                     <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
 
                     <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
@@ -85,17 +85,15 @@
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
                 
                 <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure database entries...</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure datastream modules...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co";
-        
-        // 🔐 DEVS: PASTE YOUR LONG LEGACY PUBLIC TOKEN STARTING WITH eyJ... HERE
-        const LEGACY_JWT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+        const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
 
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -107,22 +105,22 @@
             statusBox.style.display = "block";
             statusBox.style.background = "#151f32";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark to database tables...";
+            statusBox.innerText = "Transmitting certified human spark via secure function proxy...";
 
             const payload = {
-                title: document.getElementById('projectTitle').value,
-                creator: document.getElementById('creatorName').value,
-                human_genesis: document.getElementById('humanGenesis').value,
-                worker_ai_use: document.getElementById('workerAI').value,
-                detective_ai_accusation: document.getElementById('detectiveVerdict').value
+                p_title: document.getElementById('projectTitle').value,
+                p_creator: document.getElementById('creatorName').value,
+                p_human_genesis: document.getElementById('humanGenesis').value,
+                p_worker_ai: document.getElementById('workerAI').value,
+                p_detective_ai: document.getElementById('detectiveVerdict').value
             };
 
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases`, {
+                // Route call directly through the safe internal schema function endpoint
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/add_fair_judgment_case`, {
                     method: 'POST',
                     headers: {
-                        'apikey': LEGACY_JWT_KEY,
-                        'Authorization': `Bearer ${LEGACY_JWT_KEY}`,
+                        'apikey': SUPABASE_ANON_KEY,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
@@ -130,12 +128,12 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(errorText || `HTTP Status Error: ${response.status}`);
+                    throw new Error(errorText || `Network Response Error: ${response.status}`);
                 }
 
                 statusBox.style.background = "#064e3b";
                 statusBox.style.color = "#4ade80";
-                statusBox.innerText = "✅ Intent Documented! Case securely balanced in the database layer.";
+                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
                 document.getElementById('judgmentForm').reset();
                 
                 loadCasesFromDatabase();
@@ -144,7 +142,7 @@
                 statusBox.style.background = "#7f1d1d";
                 statusBox.style.color = "#f87171";
                 statusBox.innerText = `❌ System Block: ${error.message}`;
-                console.error("Trace Log Error:", error);
+                console.error("Execution Exception:", error);
             } finally {
                 btn.innerText = "Certify and Protect Intent Layer";
             }
@@ -157,8 +155,7 @@
                 const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc&limit=10`, {
                     method: 'GET',
                     headers: {
-                        'apikey': LEGACY_JWT_KEY,
-                        'Authorization': `Bearer ${LEGACY_JWT_KEY}`,
+                        'apikey': SUPABASE_ANON_KEY,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -178,3 +175,4 @@
                     block.className = "case-item";
                     block.innerHTML = `
                         <div class="case-header">
+                            <span>📘 ${escapeHTML(item.title)}</span>
