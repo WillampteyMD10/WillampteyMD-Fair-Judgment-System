@@ -94,12 +94,14 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
+        // REPLACE THE VALUES INSIDE THE QUOTES BELOW WITH YOUR TRUE COPIED SUPABASE VALUES
+        const SUPABASE_URL = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
 
         // Initialize the official browser library to resolve asymmetric client handshakes automatically
         const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+        // Form Submit Handler (Saves new user data into Supabase)
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -121,7 +123,7 @@
             };
 
             try {
-                // Connect straight to your cases table using official sdk parameters
+                // Connect straight to your cases table using official SDK parameters
                 const { data, error } = await _supabase
                     .from('cases')
                     .insert([payload]);
@@ -133,6 +135,7 @@
                 statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
                 document.getElementById('judgmentForm').reset();
                 
+                // Refresh the panel container automatically to reflect the update
                 loadCasesFromDatabase();
 
             } catch (error) {
@@ -145,8 +148,18 @@
             }
         });
 
+        // Helper function to safely escape HTML characters and prevent browser display layout injection
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+
+        // Database Content Reader Engine (Fetches cases from your active database table)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
+            if (!container) return;
             
             try {
                 const { data, error } = await _supabase
@@ -158,47 +171,3 @@
                 if (error) throw error;
                 
                 if (!data || data.length === 0) {
-                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
-                    return;
-                }
-
-                container.innerHTML = ""; 
-                data.forEach(item => {
-                    const block = document.createElement('div');
-                    block.className = "case-item";
-                    block.innerHTML = `
-                        <div class="case-header">
-                            <span>📘 ${escapeHTML(item.title)}</span>
-                            <span style="color: #64748b; font-size: 0.8rem;">ID: #${item.id}</span>
-                        </div>
-<!-- This is your existing final tag from CodePen -->
-</div> 
-
-<!-- 1. ADD THIS LINE IMMEDIATELY UNDER THE DIV TO LOAD THE DATABASE ENGINE -->
-<script src="https://jsdelivr.net"></script>
-
-<!-- 2. ADD THIS SCRIPT PACK TO TALK TO YOUR UNPAUSED SUPABASE TIER -->
-<script>
-  // Get these exact values from your Supabase Dashboard -> Settings -> API
-  const SUPABASE_URL = "https://supabase.co"; 
-  const SUPABASE_ANON_KEY = "your-actual-anon-public-key";
-
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Core App Function: Capture the user's idea before AI processes it
-  async function saveHumanIdea(authorName, conceptualThought) {
-    const { data, error } = await supabase
-      .from('willamptey_judgement_logs')
-      .insert([{ author_name: authorName, original_concept: conceptualThought }]);
-
-    if (error) {
-      console.error("Database error:", error.message);
-    } else {
-      alert("Genesis Proof Captured! Your idea is officially timestamped.");
-    }
-  }
-</script>
-
-<!-- 3. ADD THESE CLOSING TAGS TO COMPLETE YOUR CODE FILES CORRECTLY -->
-</body>
-</html>
