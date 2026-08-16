@@ -241,6 +241,58 @@ if (certifyBtn) {
 
         // Call it when the window finishes loading to display active entries
         window.addEventListener('DOMContentLoaded', loadCasesFromDatabase);
+      // Force the browser to wait until the DOM structure is fully drawn on screen
+document.addEventListener('DOMContentLoaded', () => {
+    
+    const certifyBtn = document.getElementById('certifyButton');
+    
+    if (certifyBtn) {
+        certifyBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // 🟩 STEP 1: FORCE THE COLOR TO CHANGE INSTANTLY ON CLICK
+            certifyBtn.style.backgroundColor = '#22c55e'; 
+            certifyBtn.style.color = '#ffffff';
+            certifyBtn.innerText = 'Processing Certification...';
+
+            try {
+                // Read input fields
+                const titleInput = document.getElementById('projectTitle')?.value || '';
+                const authorInput = document.getElementById('authorName')?.value || '';
+                const genesisInput = document.getElementById('humanGenesis')?.value || '';
+
+                // Step 2: Push directly to Supabase client instance
+                const { data, error } = await supabase
+                    .from('cases')
+                    .insert([
+                        { 
+                            title: titleInput, 
+                            author: authorInput, 
+                            human_genesis: genesisInput 
+                        }
+                    ]);
+
+                if (error) throw error;
+                
+                certifyBtn.innerText = '🛡️ Certified & Protected!';
+
+                // Reload display data feed container 
+                if (typeof loadCasesFromDatabase === 'function') {
+                    await loadCasesFromDatabase();
+                }
+
+            } catch (err) {
+                console.error("Database Write Error:", err.message || err);
+                // Turn red if database configuration rejects it
+                certifyBtn.style.backgroundColor = '#ef4444'; 
+                certifyBtn.innerText = 'Database Submission Error';
+            }
+        });
+    } else {
+        console.error("JavaScript could not find an HTML element with id='certifyButton'");
+    }
+});
+              
     </script>
 </body>
 </html>
