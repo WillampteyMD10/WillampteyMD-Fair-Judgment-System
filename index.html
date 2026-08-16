@@ -4,215 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
-   <!-- Native browser injection of the official Supabase Client bundle module -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+     <!-- Native browser injection of the official Supabase Client bundle module -->
+<script src="https://jsdelivr.net"></script>
 
-
-    <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #151f32;
-            --text-main: #f8fafc;
-            --accent-blue: #38bdf8;
-            --accent-green: #4ade80;
-            --accent-red: #f87171;
-            --border: #22314d;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
-        .wrapper { max-width: 1400px; margin: auto; }
-        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
-        .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
+    <script>
+        // 1. Core Supabase Configuration Credentials
+        const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
+        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
         
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
-        
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
-        h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        
-        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
-        input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
-        textarea { height: 100px; resize: vertical; }
-        
-        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s; }
-        button:hover { background: #7dd3fc; transform: translateY(-1px); }
-        
-        .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
-        .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
-        .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
-        .section-title { font-weight: bold; display: block; margin-bottom: 2px; }
-        
-        .status-box { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; text-align: center; }
-        .refresh-btn { background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 8px 15px; font-size: 0.85rem; width: auto; margin: 0; }
-        .refresh-btn:hover { background: rgba(56, 189, 248, 0.1); }
-    </style>
-</head>
-<body>
+        // Initialize single global lowercase client using official CDN builder
+        const supabase = supabaseJs.createClient(supabaseUrl, supabaseAnonKey);
 
-    <div class="wrapper">
-        <header>
-            <h1>⚖️ WillampteyMD Fair Judgment System</h1>
-            <p class="subtitle">"Quis custodiet ipsos custodes?" — Neutral Equilibrium for the Toxic Triad of AI Governance</p>
-        </header>
-
-        <div class="grid-layout">
-            <div class="card">
-                <h2>🛡️ Creator Defense Intake</h2>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px;">Establish your human idea baseline prior to any secondary generative processing or false detector claims.</p>
-                
-                <form id="judgmentForm">
-                    <label for="projectTitle">Project / Intellectual Asset Title</label>
-                    <input type="text" id="projectTitle" placeholder="e.g., Toxic Triads Book Masterclass" required>
-
-                    <label for="creatorName">Author / Original Creator Name</label>
-                    <input type="text" id="creatorName" placeholder="Your Name or Pseudonym" required>
-
-                    <label for="humanGenesis" style="color: var(--accent-green);">1. Human Genesis (The Original Spark/Outline)</label>
-                    <textarea id="humanGenesis" placeholder="Describe the foundational concept or blueprint you structured BEFORE using any secondary tools..." required></textarea>
-
-                    <label for="workerAI" style="color: #cbd5e1;">2. Worker AI Layer (Generative Enhancer)</label>
-                    <textarea id="workerAI" placeholder="Paste structural details or text expanded via generative models..."></textarea>
-
-                    <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
-                    <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
-
-                    <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
-                </form>
-                <div id="statusNotification" class="status-box"></div>
-            </div>
-
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
-                    <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
-                    <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
-                </div>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
-                
-                <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure interface modules...</p>
-                </div>
-            </div>
-        </div>
-    </div>
-// Remove any "const" or "let" descriptors to kill the duplicate declaration bug!
-supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co";
-supabaseanonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
-
-// Re-assign the value directly to the existing variable without re-declaring it
-supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
-
-    
-
-       // Change line 98 to look EXACTLY like this:
-const supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
-
-
-       // Bind directly to the button element instead of the form container
-const certifyBtn = document.getElementById('certifyButton');
-
-if (certifyBtn) {
-    certifyBtn.addEventListener('click', async (e) => {
-        e.preventDefault(); // Stop any native browser actions
-        
-        console.log("Certify button clicked directly!"); // Verification checkpoint
-        
-        // 1. FORCE THE GREEN COLOR IMMEDIATELY
-        certifyBtn.style.backgroundColor = '#22c55e'; // Tailwind green-500
-        certifyBtn.style.color = '#ffffff';
-        certifyBtn.innerText = 'Processing Certification...';
-
-        try {
-            // Fetch values from your inputs
-            const titleInput = document.getElementById('projectTitle')?.value || '';
-            const authorInput = document.getElementById('authorName')?.value || '';
-            const genesisInput = document.getElementById('humanGenesis')?.value || '';
-
-            // 2. Submit directly to your clean Supabase client instance
-            const { data, error } = await supabase
-                .from('cases')
-                .insert([
-                    { 
-                        title: titleInput, 
-                        author: authorInput, 
-                        human_genesis: genesisInput 
-                    }
-                ]);
-
-            if (error) throw error;
-            
-            // Final success state confirmation
-            certifyBtn.innerText = '🛡️ Certified & Protected!';
-
-            // Refresh your database cases feed container at the bottom
-            if (typeof loadCasesFromDatabase === 'function') {
-                await loadCasesFromDatabase();
-            }
-
-        } catch (err) {
-            console.error("Database Transaction Failed:", err);
-            
-            // Flip to red if Supabase blocks the request
-            certifyBtn.style.backgroundColor = '#ef4444'; // Tailwind red-500
-            certifyBtn.innerText = 'Database Error (Check Console)';
-        }
-    });
-} else {
-    console.error("Could not find an HTML element with id='certifyButton'");
-}
-
-});
-
-
-            const payload = {
-                title: document.getElementById('projectTitle').value,
-                creator: document.getElementById('creatorName').value,
-                human_genesis: document.getElementById('humanGenesis').value,
-                worker_ai_use: document.getElementById('workerAI').value,
-                detective_ai_accusation: document.getElementById('detectiveVerdict').value
-            };
-
-            try {
-                // Connect straight to your cases table using official SDK parameters
-                const { data, error } = await supabase
-                    .from('cases')
-                    .insert([payload]);
-
-                if (error) throw error;
-
-                statusBox.style.background = "#064e3b";
-                statusBox.style.color = "#4ade80";
-                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
-                document.getElementById('judgmentForm').reset();
-                
-                // Refresh the panel container automatically to reflect the update
-                loadCasesFromDatabase();
-
-            } catch (error) {
-                statusBox.style.background = "#7f1d1d";
-                statusBox.style.color = "#f87171";
-                statusBox.innerText = `❌ System Block: ${error.message || error.details || 'Handshake rejected'}`;
-                console.error("SDK Execution Trace:", error);
-            } finally {
-                btn.innerText = "Certify and Protect Intent Layer";
-            }
-        });
-
-        // Helper function to safely escape HTML characters and prevent browser display layout injection
+        // 2. Helper function to safely escape HTML layout injections
         function escapeHTML(str) {
             if (!str) return '';
-            return str.replace(/[&<>'"]/g, 
-                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
-            );
+            return str.replace(/[&<>'"]/g, tag => ({ 
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' 
+            }[tag] || tag));
         }
 
-               // Database Content Reader Engine (Fetches cases from your active database table)
+        // 3. Database Content Reader Engine (Fetches and prints entries)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
             if (!container) return;
             
             try {
-                // Ensure this variable matches your exact Supabase initialization name at the top
-                const { data, error } = await supabase 
+                const { data, error } = await supabase
                     .from('cases')
                     .select('*')
                     .order('id', { ascending: false })
@@ -221,78 +38,85 @@ if (certifyBtn) {
                 if (error) throw error;
                 
                 if (!data || data.length === 0) {
-                    container.innerHTML = "<p class='text-gray-500 text-sm'>No certified records found yet.</p>";
+                    container.innerHTML = "<p class='text-gray-500 text-sm p-3'>No certified records found yet.</p>";
                     return;
                 }
 
-                // If data exists, render it to your display container
+                // Safely render data to display container matrix
                 container.innerHTML = data.map(item => `
-                    <div class="p-3 border-b border-gray-200">
-                        <strong class="text-gray-800">${item.title || 'Untitled'}</strong>
-                        <p class="text-xs text-gray-500">By ${item.author || 'Unknown'}</p>
+                    <div class="p-3 border-b border-gray-100 last:border-b-0 text-left">
+                        <div class="font-semibold text-gray-800 text-sm">${escapeHTML(item.title) || 'Untitled Asset'}</div>
+                        <div class="text-xs text-gray-500">Author: ${escapeHTML(item.author) || 'Unknown Creator'}</div>
+                        <p class="text-xs text-gray-600 mt-1 italic">"${escapeHTML(item.human_genesis) || 'No core outline text logged.'}"</p>
                     </div>
                 `).join('');
 
             } catch (err) {
                 console.error("Database Reader Error:", err.message);
-                container.innerHTML = `<p class="text-red-500 text-xs">Failed to load records: ${err.message}</p>`;
+                container.innerHTML = `<p class="text-red-500 text-xs p-3">Failed to load records: ${err.message}</p>`;
             }
         }
 
-        // Call it when the window finishes loading to display active entries
-        window.addEventListener('DOMContentLoaded', loadCasesFromDatabase);
-      // Force the browser to wait until the DOM structure is fully drawn on screen
-document.addEventListener('DOMContentLoaded', () => {
-    
-    const certifyBtn = document.getElementById('certifyButton');
-    
-    if (certifyBtn) {
-        certifyBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
+        // 4. Primary Intent Certification Engine (Click/Submit Controller)
+        document.addEventListener('DOMContentLoaded', () => {
+            // First, trigger an initial data pull to populate historical logs on screen mount
+            loadCasesFromDatabase();
+
+            const certifyBtn = document.getElementById('certifyButton');
             
-            // 🟩 STEP 1: FORCE THE COLOR TO CHANGE INSTANTLY ON CLICK
-            certifyBtn.style.backgroundColor = '#22c55e'; 
-            certifyBtn.style.color = '#ffffff';
-            certifyBtn.innerText = 'Processing Certification...';
+            if (certifyBtn) {
+                certifyBtn.addEventListener('click', async (e) => {
+                    e.preventDefault(); // Lock down form resetting
+                    
+                    // 🟩 STEP 1: FORCE THE COLOR TO CHANGE INSTANTLY ON CLICK
+                    certifyBtn.style.backgroundColor = '#22c55e'; 
+                    certifyBtn.style.color = '#ffffff';
+                    certifyBtn.innerText = 'Processing Certification...';
 
-            try {
-                // Read input fields
-                const titleInput = document.getElementById('projectTitle')?.value || '';
-                const authorInput = document.getElementById('authorName')?.value || '';
-                const genesisInput = document.getElementById('humanGenesis')?.value || '';
+                    try {
+                        // Safely extract input string properties from user inputs
+                        const titleInput = document.getElementById('projectTitle')?.value || '';
+                        const authorInput = document.getElementById('authorName')?.value || '';
+                        const genesisInput = document.getElementById('humanGenesis')?.value || '';
 
-                // Step 2: Push directly to Supabase client instance
-                const { data, error } = await supabase
-                    .from('cases')
-                    .insert([
-                        { 
-                            title: titleInput, 
-                            author: authorInput, 
-                            human_genesis: genesisInput 
-                        }
-                    ]);
+                        // Step 2: Push structured data directly to your active cases table
+                        const { data, error } = await supabase
+                            .from('cases')
+                            .insert([
+                                { 
+                                    title: titleInput, 
+                                    author: authorInput, 
+                                    human_genesis: genesisInput 
+                                }
+                            ]);
 
-                if (error) throw error;
-                
-                certifyBtn.innerText = '🛡️ Certified & Protected!';
+                        if (error) throw error;
+                        
+                        // Step 3: Success state tracking feedback
+                        certifyBtn.innerText = '🛡️ Certified & Protected!';
+                        
+                        // Clear input form if judgmentForm exists
+                        const form = document.getElementById('judgmentForm');
+                        if (form) form.reset();
 
-                // Reload display data feed container 
-                if (typeof loadCasesFromDatabase === 'function') {
-                    await loadCasesFromDatabase();
-                }
+                        // Force refresh your view feed row layout to show the new entry immediately
+                        await loadCasesFromDatabase();
 
-            } catch (err) {
-                console.error("Database Write Error:", err.message || err);
-                // Turn red if database configuration rejects it
-                certifyBtn.style.backgroundColor = '#ef4444'; 
-                certifyBtn.innerText = 'Database Submission Error';
+                    } catch (err) {
+                        console.error("Database Transaction Failed:", err.message || err);
+                        // Flips to a clear red failure signal if database rejects it
+                        certifyBtn.style.backgroundColor = '#ef4444'; 
+                        certifyBtn.innerText = `System Block: ${err.message || 'Handshake rejected'}`;
+                    }
+                });
+            } else {
+                console.error("Critical: Could not map an element with id='certifyButton'");
             }
         });
-    } else {
-        console.error("JavaScript could not find an HTML element with id='certifyButton'");
-    }
-});
-              
+    </script>
+</body>
+</html>
+
     </script>
 </body>
 </html>
