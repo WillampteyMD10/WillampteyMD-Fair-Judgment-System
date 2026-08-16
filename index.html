@@ -1,14 +1,13 @@
-    <!-- 1. Load the framework asset directly from your own Vercel deployment domain -->
+    <!-- 1. CRITICAL: This MUST be loaded first at the top of your body layout -->
     <script src="./supabase.js"></script>
 
     <script>
         // 2. Core Supabase Platform Configuration Credentials
-     const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
+        // Ensure your actual URL and Ey... key are cleanly pasted inside these quotation marks
+        const supabaseUrl =  "https://cbqkkipipssgplwbuqrm.supabase.co";
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
         
-        // Use the safe constructor object injected by your local file asset
-        const supabaseConstructor = window.supabase || window.supabaseJs;
-        const supabase = supabaseConstructor.createClient(supabaseUrl, supabaseAnonKey);
+        let supabase;
 
         // 3. Helper utility to clean up custom view logs
         function escapeHTML(str) {
@@ -24,6 +23,8 @@
             if (!container) return;
             
             try {
+                if (!supabase) return;
+                
                 const { data, error } = await supabase
                     .from('cases')
                     .select('*')
@@ -50,9 +51,21 @@
             }
         }
 
-        // 5. Connect Intent Certification Handler directly to your main interactive button
+        // 5. SAFE ORCHESTRATION LAYER: Wait until everything is rendered on screen
         document.addEventListener('DOMContentLoaded', () => {
-            loadCasesFromDatabase(); // Call history on launch
+            // Safely capture the framework object from your local file script injection
+            const supabaseConstructor = window.supabase || window.supabaseJs;
+            
+            if (!supabaseConstructor) {
+                console.error("Critical Matrix Failure: Local supabase.js framework asset failed to map onto the window layer.");
+                return;
+            }
+
+            // Initialize your database link cleanly inside the safe scope wrapper
+            supabase = supabaseConstructor.createClient(supabaseUrl, supabaseAnonKey);
+
+            // Populates your dashboard history logs instantly on load
+            loadCasesFromDatabase(); 
 
             const certifyBtn = document.getElementById('certifyButton');
             
