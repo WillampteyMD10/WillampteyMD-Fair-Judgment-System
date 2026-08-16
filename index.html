@@ -96,12 +96,12 @@
     </div>
 
     <script>
-        // REPLACE THE VALUES INSIDE THE QUOTES BELOW WITH YOUR TRUE COPIED SUPABASE VALUES
-        const SUPABASEURL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-        const SUPABASEANONKEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+        // REPLACE THE VALUES INSIDE THE QUOTES BELOW WITH YOUR TRUE COPIED supabase VALUES
+        const supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
+        const supabaseanonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
 
         // Initialize the official browser library to resolve asymmetric client handshakes automatically
-        const supabase = window.supabase.createClient(SUPABASEURL, SUPABASEANONKEY);
+        const supabase = window.supabase.createClient(supabaseurl, supabaseanonkey);
 
         // Form Submit Handler (Saves new user data into Supabase)
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
