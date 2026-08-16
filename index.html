@@ -158,13 +158,14 @@
             );
         }
 
-        // Database Content Reader Engine (Fetches cases from your active database table)
+               // Database Content Reader Engine (Fetches cases from your active database table)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
             if (!container) return;
             
             try {
-                const { data, error } = await _supabase
+                // Ensure this variable matches your exact Supabase initialization name at the top
+                const { data, error } = await supabase 
                     .from('cases')
                     .select('*')
                     .order('id', { ascending: false })
@@ -173,3 +174,27 @@
                 if (error) throw error;
                 
                 if (!data || data.length === 0) {
+                    container.innerHTML = "<p class='text-gray-500 text-sm'>No certified records found yet.</p>";
+                    return;
+                }
+
+                // If data exists, render it to your display container
+                container.innerHTML = data.map(item => `
+                    <div class="p-3 border-b border-gray-200">
+                        <strong class="text-gray-800">${item.title || 'Untitled'}</strong>
+                        <p class="text-xs text-gray-500">By ${item.author || 'Unknown'}</p>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error("Database Reader Error:", err.message);
+                container.innerHTML = `<p class="text-red-500 text-xs">Failed to load records: ${err.message}</p>`;
+            }
+        }
+
+        // Call it when the window finishes loading to display active entries
+        window.addEventListener('DOMContentLoaded', loadCasesFromDatabase);
+    </script>
+</body>
+</html>
+
