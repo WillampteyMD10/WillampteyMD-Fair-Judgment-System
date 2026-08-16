@@ -94,11 +94,14 @@
             </div>
         </div>
     </div>
+// Remove any "const" or "let" descriptors to kill the duplicate declaration bug!
+supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co";
+supabaseanonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
-    <script>
-        // REPLACE THE VALUES INSIDE THE QUOTES BELOW WITH YOUR TRUE COPIED supabase VALUES
-        const supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-        const supabaseanonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+// Re-assign the value directly to the existing variable without re-declaring it
+supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
+
+    
 
        // Change line 98 to look EXACTLY like this:
 const supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
