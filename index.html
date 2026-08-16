@@ -85,7 +85,7 @@
                 <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
                 
                 <div id="casesDisplayContainer">
-                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Connecting secure data nodes...</p>
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Connecting secure datastream modules...</p>
                 </div>
             </div>
         </div>
@@ -105,7 +105,7 @@
             statusBox.style.display = "block";
             statusBox.style.background = "#151f32";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark directly to data layer...";
+            statusBox.innerText = "Transmitting certified human spark via edge query routing...";
 
             const payload = {
                 title: document.getElementById('projectTitle').value,
@@ -116,8 +116,8 @@
             };
 
             try {
-                // Connecting cleanly straight to the direct /cases table route with modern apikey headers
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases`, {
+                // FIXED: Appending the token parameter straight to the URL mapping string to comply with current Envoy rules
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?apikey=${SUPABASE_ANON_KEY}`, {
                     method: 'POST',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -129,7 +129,7 @@
 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(errorText || `HTTP Status Error: ${response.status}`);
+                    throw new Error(errorText || `Network Response Error: ${response.status}`);
                 }
 
                 statusBox.style.background = "#064e3b";
@@ -153,7 +153,7 @@
             const container = document.getElementById('casesDisplayContainer');
             
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc&limit=10`, {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/cases?select=*&order=id.desc&limit=10&apikey=${SUPABASE_ANON_KEY}`, {
                     method: 'GET',
                     headers: {
                         'apikey': SUPABASE_ANON_KEY,
@@ -174,5 +174,3 @@
                 data.forEach(item => {
                     const block = document.createElement('div');
                     block.className = "case-item";
-                    block.innerHTML = `
-                        <div class="case-header">
