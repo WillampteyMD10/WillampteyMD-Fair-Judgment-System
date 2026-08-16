@@ -107,18 +107,61 @@ supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
 const supabase = supabaseJs.createClient(supabaseurl, supabaseanonkey);
 
 
-        // Form Submit Handler (Saves new user data into Supabase)
-        document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const statusBox = document.getElementById('statusNotification');
-            
-            btn.innerText = "Processing Equilibrium Array...";
-            statusBox.style.display = "block";
-            statusBox.style.background = "#151f32";
-            statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark via SDK wrapper layer...";
+       // Form Submit Handler (Saves new user data into Supabase)
+document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Find your Certify button (adjust the ID if yours is different, e.g., 'certifyBtn')
+    const submitButton = e.target.querySelector('button[type="submit"]') || document.getElementById('certifyButton');
+    
+    // 1. FORCE IT GREEN IMMEDIATELY TO PROVE THE CLICK IS ALIVE
+    if (submitButton) {
+        submitButton.style.backgroundColor = '#22c55e'; // Tailwind green-500
+        submitButton.style.color = '#ffffff';
+        submitButton.innerText = 'Processing Certification...';
+    }
+
+    try {
+        // Fetch values from your inputs (Make sure these IDs match your HTML fields!)
+        const titleInput = document.getElementById('projectTitle')?.value || '';
+        const authorInput = document.getElementById('authorName')?.value || '';
+        const genesisInput = document.getElementById('humanGenesis')?.value || '';
+
+        // 2. Insert data using your clean, fixed 'supabase' variable
+        const { data, error } = await supabase
+            .from('cases')
+            .insert([
+                { 
+                    title: titleInput, 
+                    author: authorInput, 
+                    // Match these exact column keys to your Supabase table schema
+                    human_genesis: genesisInput 
+                }
+            ]);
+
+        if (error) throw error;
+        
+        // Success confirmation state
+        if (submitButton) {
+            submitButton.innerText = '🛡️ Certified & Protected!';
+        }
+
+        // Refresh your case reader engine at the bottom of the page to show the new case
+        if (typeof loadCasesFromDatabase === 'function') {
+            await loadCasesFromDatabase();
+        }
+
+    } catch (err) {
+        console.error("Database Save Failed:", err.message || err);
+        
+        // If Supabase blocks it, turn the button red so you see the error visually
+        if (submitButton) {
+            submitButton.style.backgroundColor = '#ef4444'; // Tailwind red-500
+            submitButton.innerText = 'Database Error (Check Console)';
+        }
+    }
+});
+
 
             const payload = {
                 title: document.getElementById('projectTitle').value,
