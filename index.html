@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
-    <!-- Alternative browser injection using unpkg CDN infrastructure -->
+   <!-- Alternative browser injection using cdnjs infrastructure -->
 <script src="https://unpkg.com"></script>
+
+
 
 
     <script>
@@ -13,8 +15,16 @@
         const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
         
-        // Initialize single global lowercase client using official CDN builder
-        const supabase = supabaseJs.createClient(supabaseUrl, supabaseAnonKey);
+      // Check all possible global names injected by different CDN libraries
+const supabaseConstructor = window.supabaseJs || window.supabase || (typeof supabaseJs !== 'undefined' ? supabaseJs : null);
+
+if (!supabaseConstructor) {
+    console.error("Critical: Supabase library failed to download from the CDN provider.");
+}
+
+// Safely initialize your lowercase client variable without crashing
+const supabase = supabaseConstructor.createClient(supabaseUrl, supabaseAnonKey);
+
 
         // 2. Helper function to safely escape HTML layout injections
         function escapeHTML(str) {
