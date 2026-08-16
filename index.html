@@ -95,8 +95,72 @@
         const SUPABASE_URL = "https://supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
 
-        document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+       // Change from form submission tracking to a direct button listener to prevent native browser reloads
+document.getElementById('submitBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // Stops browser event bubbles from resetting the canvas view state
+
+    // Explicitly validate form fields manually prior to network runtime execution
+    const titleVal = document.getElementById('projectTitle').value;
+    const creatorVal = document.getElementById('creatorName').value;
+    const genesisVal = document.getElementById('humanGenesis').value;
+
+    if (!titleVal || !creatorVal || !genesisVal) {
+        alert("Please fill in all three required parameters to balance the intent array.");
+        return;
+    }
+    
+    const btn = document.getElementById('submitBtn');
+    const statusBox = document.getElementById('statusNotification');
+    
+    btn.innerText = "Processing Equilibrium Array...";
+    btn.disabled = true; // Lock the button on click so users can't click it twice
+    statusBox.style.display = "block";
+    statusBox.style.background = "#151f32";
+    statusBox.style.color = "#ffffff";
+    statusBox.innerText = "Transmitting certified human spark via secure wrapper functions...";
+
+    const payload = {
+        p_title: titleVal,
+        p_creator: creatorVal,
+        p_human_genesis: genesisVal,
+        p_worker_ai: document.getElementById('workerAI').value,
+        p_detective_ai: document.getElementById('detectiveVerdict').value
+    };
+
+    try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/add_fair_judgment_case`, {
+            method: 'POST',
+            headers: {
+                'apikey': SUPABASE_ANON_KEY,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Network Response Error: ${response.status}`);
+        }
+
+        statusBox.style.background = "#064e3b";
+        statusBox.style.color = "#4ade80";
+        statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
+        document.getElementById('judgmentForm').reset();
+        
+        loadCasesFromDatabase();
+
+    } catch (error) {
+        statusBox.style.background = "#7f1d1d";
+        statusBox.style.color = "#f87171";
+        statusBox.innerText = `❌ System Block: ${error.message}`;
+        console.error("Execution Exception:", error);
+    } finally {
+        btn.innerText = "Certify and Protect Intent Layer";
+        btn.disabled = false; // Release lock for next input submission
+    }
+});
+
             
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('statusNotification');
