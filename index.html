@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
-    <!-- Native browser injection of the official Supabase Client bundle module -->
-<script src="https://cloudflare.com"></script>
+    
+    <!-- Cloudflare public alternate CDN network link (Immune to network blocking timeouts) -->
+    <script src="https://cloudflare.com"></script>
 
     <style>
         :root {
@@ -95,25 +96,14 @@
     </div>
 
     <script>
-         // Core Supabase configuration parameters
+        // 1. Unified Configuration Core 
         const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
-        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
-
-       // Safely initialize the client constructor provided by the Cloudflare CDN script
-        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-            <!-- 1. Cloudflare alternative CDN link (Bypasses network blocks entirely) -->
-    <script src="https://cloudflare.com"></script>
-
-    <script>
-        // 2. Core Supabase configuration parameters
-        const supabaseUrl = "https://supabase.co";
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
-        // Initialize the client cleanly using the cdnjs constructor object
-        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+        // Global Client Initialization using the Cloudflare CDN constructor
+        const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : supabaseJs.createClient(supabaseUrl, supabaseAnonKey);
 
-        // 3. Helper function to safely escape HTML data view layouts
+        // 2. Safe string injection filter utility
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({ 
@@ -121,64 +111,7 @@
             }[tag] || tag));
         }
 
-        // 4. Form Submit Handler (Saves user intake details to database)
-        document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const statusBox = document.getElementById('statusNotification');
-            
-            btn.innerText = "Processing Equilibrium Array...";
-            btn.style.backgroundColor = "#151f32";
-            btn.style.color = "#ffffff";
-
-            statusBox.style.display = "block";
-            statusBox.style.background = "#151f32";
-            statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark via SDK wrapper layer...";
-
-            const payload = {
-                title: document.getElementById('projectTitle').value,
-                creator: document.getElementById('creatorName').value,
-                human_genesis: document.getElementById('humanGenesis').value,
-                worker_ai_use: document.getElementById('workerAI').value,
-                detective_ai_accusation: document.getElementById('detectiveVerdict').value
-            };
-
-            try {
-                const { data, error } = await supabase
-                    .from('cases')
-                    .insert([payload]);
-
-                if (error) throw error;
-
-                // 🟩 FORCE THE BUTTON AND STATUS NOTIFICATION GREEN INSTANTLY
-                btn.style.backgroundColor = '#22c55e'; 
-                btn.style.color = '#ffffff';
-                btn.innerText = '🛡️ Certified & Protected!';
-
-                statusBox.style.background = "#064e3b";
-                statusBox.style.color = "#4ade80";
-                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
-                
-                // Fire your custom alert confirmation notification
-                alert("Genesis Proof Captured! Your idea is officially timestamped.");
-
-                document.getElementById('judgmentForm').reset();
-                await loadCasesFromDatabase();
-
-            } catch (error) {
-                btn.style.backgroundColor = '#ef4444'; 
-                btn.innerText = "Certify and Protect Intent Layer";
-
-                statusBox.style.background = "#7f1d1d";
-                statusBox.style.color = "#f87171";
-                statusBox.innerText = `❌ System Block: ${error.message || 'Handshake rejected'}`;
-                console.error("SDK Execution Trace:", error);
-            }
-        });
-
-        // 5. Database Content Reader Engine (Fetches and renders logs)
+        // 3. Database Content Reader Engine (Fetches and renders system matrix tables)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
             if (!container) return;
@@ -197,7 +130,104 @@
                     return;
                 }
 
-                // Render out rows safely into your layout view container
+                container.innerHTML = data.map(item => `
+                    <div class="case-item">
+                        <div class="case-header">
+                            <span>Asset: ${escapeHTML(item.title) || 'Untitled'}</span>
+                            <span style="font-size: 0.8rem; color: #64748b;">Author: ${escapeHTML(item.creator) || 'Unknown'}</span>
+                        </div>
+                        <div class="case-section">
+                            <span class="section-title" style="color: var(--accent-green);">1. Human Genesis Baseline:</span>
+                            <p style="margin: 2px 0 0 0; font-style: italic;">${escapeHTML(item.human_genesis) || 'None provided.'}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error("Database Reader Error:", err.message);
+                container.innerHTML = `<p style='color: #f87171; text-align: center; padding: 20px 0;'>Failed to read database records: ${err.message}</p>`;
+            }
+        }
+
+        // 4. Form Submission and Layout Color Engine Handler
+        document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('submitBtn');
+            const statusBox = document.getElementById('statusNotification');
+            
+            // Visual transitions to processing state 
+            btn.innerText = "Processing Equilibrium Array...";
+            btn.style.backgroundColor = "#151f32";
+            btn.style.color = "#ffffff";
+
+            statusBox.style.display = "block";
+            statusBox.style.background = "#151f32";
+            statusBox.style.color = "#ffffff";
+            statusBox.innerText = "Transmitting certified human spark via SDK wrapper layer...";
+
+                      const payload = {
+                title: document.getElementById('projectTitle').value,
+                creator: document.getElementById('creatorName').value,
+                human_genesis: document.getElementById('humanGenesis').value,
+                worker_ai_use: document.getElementById('workerAI').value,
+                detective_ai_accusation: document.getElementById('detectiveVerdict').value
+            };
+
+            try {
+                // Submit payload directly using your clean supabase variable
+                const { data, error } = await supabase
+                    .from('cases')
+                    .insert([payload]);
+
+                if (error) throw error;
+
+                // 🟩 FORCE COLOR TO TURN GREEN INSTANTLY ON SUCCESSFUL DATABASE WRITE
+                btn.style.backgroundColor = '#22c55e'; 
+                btn.style.color = '#ffffff';
+                btn.innerText = '🛡️ Certified & Protected!';
+
+                statusBox.style.background = "#064e3b";
+                statusBox.style.color = "#4ade80";
+                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
+                
+                // Fire your custom alert timestamp notification
+                alert("Genesis Proof Captured! Your idea is officially timestamped.");
+
+                document.getElementById('judgmentForm').reset();
+                await loadCasesFromDatabase();
+
+            } catch (error) {
+                btn.style.backgroundColor = 'var(--accent-blue)'; 
+                btn.style.color = '#0b0f19';
+                btn.innerText = "Certify and Protect Intent Layer";
+
+                statusBox.style.background = "#7f1d1d";
+                statusBox.style.color = "#f87171";
+                statusBox.innerText = `❌ System Block: ${error.message || 'Handshake rejected'}`;
+                console.error("SDK Execution Trace:", error);
+            }
+        });
+
+        // Database Content Reader Engine (Fetches and renders active cases)
+        async function loadCasesFromDatabase() {
+            const container = document.getElementById('casesDisplayContainer');
+            if (!container) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('cases')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
+                    return;
+                }
+
                 container.innerHTML = data.map(item => `
                     <div class="case-item">
                         <div class="case-header">
@@ -216,7 +246,7 @@
             }
         }
 
-        // Initialize listener anchors on initial layout page mount load
+        // Initialize listener anchors on layout load page mount
         document.addEventListener('DOMContentLoaded', () => {
             loadCasesFromDatabase();
             
@@ -228,5 +258,3 @@
     </script>
 </body>
 </html>
-
-
