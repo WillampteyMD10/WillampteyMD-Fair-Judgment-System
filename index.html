@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
     <!-- Native browser injection of the official Supabase Client bundle module -->
-    <script src="https://jsdelivr.net"></script>
+<script src="https://cloudflare.com"></script>
 
     <style>
         :root {
@@ -95,12 +95,33 @@
     </div>
 
     <script>
-        const supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co";
-        const supabaseAnonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+         // Core Supabase configuration parameters
+        const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
+        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
 
-        // Initialize the official browser library to resolve asymmetric client handshakes automatically
-        const supabase = window.supabase.createClient(supabaseurlL, supabaseanonkey);
+       // Safely initialize the client constructor provided by the Cloudflare CDN script
+        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
+            <!-- 1. Cloudflare alternative CDN link (Bypasses network blocks entirely) -->
+    <script src="https://cloudflare.com"></script>
+
+    <script>
+        // 2. Core Supabase configuration parameters
+        const supabaseUrl = "https://supabase.co";
+        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
+
+        // Initialize the client cleanly using the cdnjs constructor object
+        const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+        // 3. Helper function to safely escape HTML data view layouts
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, tag => ({ 
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' 
+            }[tag] || tag));
+        }
+
+        // 4. Form Submit Handler (Saves user intake details to database)
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -108,6 +129,9 @@
             const statusBox = document.getElementById('statusNotification');
             
             btn.innerText = "Processing Equilibrium Array...";
+            btn.style.backgroundColor = "#151f32";
+            btn.style.color = "#ffffff";
+
             statusBox.style.display = "block";
             statusBox.style.background = "#151f32";
             statusBox.style.color = "#ffffff";
@@ -122,35 +146,45 @@
             };
 
             try {
-                // Connect straight to your cases table using official sdk parameters
-                const { data, error } = await _supabase
+                const { data, error } = await supabase
                     .from('cases')
                     .insert([payload]);
 
                 if (error) throw error;
 
+                // 🟩 FORCE THE BUTTON AND STATUS NOTIFICATION GREEN INSTANTLY
+                btn.style.backgroundColor = '#22c55e'; 
+                btn.style.color = '#ffffff';
+                btn.innerText = '🛡️ Certified & Protected!';
+
                 statusBox.style.background = "#064e3b";
                 statusBox.style.color = "#4ade80";
                 statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
-                document.getElementById('judgmentForm').reset();
                 
-                loadCasesFromDatabase();
+                // Fire your custom alert confirmation notification
+                alert("Genesis Proof Captured! Your idea is officially timestamped.");
+
+                document.getElementById('judgmentForm').reset();
+                await loadCasesFromDatabase();
 
             } catch (error) {
+                btn.style.backgroundColor = '#ef4444'; 
+                btn.innerText = "Certify and Protect Intent Layer";
+
                 statusBox.style.background = "#7f1d1d";
                 statusBox.style.color = "#f87171";
-                statusBox.innerText = `❌ System Block: ${error.message || error.details || 'Handshake rejected'}`;
+                statusBox.innerText = `❌ System Block: ${error.message || 'Handshake rejected'}`;
                 console.error("SDK Execution Trace:", error);
-            } finally {
-                btn.innerText = "Certify and Protect Intent Layer";
             }
         });
 
+        // 5. Database Content Reader Engine (Fetches and renders logs)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
+            if (!container) return;
             
             try {
-                const { data, error } = await _supabase
+                const { data, error } = await supabase
                     .from('cases')
                     .select('*')
                     .order('id', { ascending: false })
@@ -163,44 +197,36 @@
                     return;
                 }
 
-                container.innerHTML = ""; 
-                data.forEach(item => {
-                    const block = document.createElement('div');
-                    block.className = "case-item";
-                    block.innerHTML = `
+                // Render out rows safely into your layout view container
+                container.innerHTML = data.map(item => `
+                    <div class="case-item">
                         <div class="case-header">
-                            <span>📘 ${escapeHTML(item.title)}</span>
-                            <span style="color: #64748b; font-size: 0.8rem;">ID: #${item.id}</span>
+                            <span>Asset: ${escapeHTML(item.title) || 'Untitled'}</span>
+                            <span style="font-size: 0.8rem; color: #64748b;">Author: ${escapeHTML(item.creator) || 'Unknown'}</span>
                         </div>
-<!-- This is your existing final tag from CodePen -->
-</div> 
+                        <div class="case-section">
+                            <span class="section-title" style="color: var(--accent-green);">1. Human Genesis Baseline:</span>
+                            <p style="margin: 2px 0 0 0; font-style: italic;">${escapeHTML(item.human_genesis) || 'None provided.'}</p>
+                        </div>
+                    </div>
+                `).join('');
 
-<!-- 1. ADD THIS LINE IMMEDIATELY UNDER THE DIV TO LOAD THE DATABASE ENGINE -->
-<script src="https://jsdelivr.net"></script>
+            } catch (err) {
+                console.error("Database Reader Error:", err.message);
+            }
+        }
 
-<!-- 2. ADD THIS SCRIPT PACK TO TALK TO YOUR UNPAUSED SUPABASE TIER -->
-<script>
-  // Get these exact values from your Supabase Dashboard -> Settings -> API
-  const SUPABASE_URL = "https://supabase.co"; 
-  const SUPABASE_ANON_KEY = "your-actual-anon-public-key";
-
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Core App Function: Capture the user's idea before AI processes it
-  async function saveHumanIdea(authorName, conceptualThought) {
-    const { data, error } = await supabase
-      .from('willamptey_judgement_logs')
-      .insert([{ author_name: authorName, original_concept: conceptualThought }]);
-
-    if (error) {
-      console.error("Database error:", error.message);
-    } else {
-      alert("Genesis Proof Captured! Your idea is officially timestamped.");
-    }
-  }
-</script>
-
-<!-- 3. ADD THESE CLOSING TAGS TO COMPLETE YOUR CODE FILES CORRECTLY -->
+        // Initialize listener anchors on initial layout page mount load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCasesFromDatabase();
+            
+            const refreshBtn = document.getElementById('refreshBtn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', loadCasesFromDatabase);
+            }
+        });
+    </script>
 </body>
 </html>
+
 
