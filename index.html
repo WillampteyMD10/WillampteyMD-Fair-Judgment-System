@@ -1,61 +1,114 @@
-    <script>
-        // 1. Integrated Database Wrapper Module (Completely bypasses all external CDN blocks)
-        (function(global) {
-            var SupabaseClient = function(url, key) {
-                this.url = url;
-                this.key = key;
-            };
-            SupabaseClient.prototype.from = function(tableName) {
-                var self = this;
-                var headers = {
-                    'apikey': self.key,
-                    'Authorization': 'Bearer ' + self.key,
-                    'Content-Type': 'application/json'
-                };
-                return {
-                    select: function() {
-                        return {
-                            order: function() {
-                                return {
-                                    limit: function() {
-                                        return fetch(self.url + '/rest/v1/' + tableName + '?select=*', {
-                                            method: 'GET',
-                                            headers: headers
-                                        }).then(function(r) { return r.json().then(function(d) { return { data: d, error: !r.ok ? d : null }; }); });
-                                    }
-                                };
-                            }
-                        };
-                    },
-                    insert: function(payloadArray) {
-                        return fetch(self.url + '/rest/v1/' + tableName, {
-                            method: 'POST',
-                            headers: headers,
-                            body: JSON.stringify(payloadArray)
-                        }).then(function(r) { 
-                            if (r.status === 201 || r.ok) {
-                                return { data: payloadArray, error: null };
-                            }
-                            return r.json().then(function(d) { return { data: null, error: d }; });
-                        });
-                    }
-                };
-            };
-            global.customSupabaseEngine = {
-                createClient: function(url, key) {
-                    return new SupabaseClient(url, key);
-                }
-            };
-        })(window);
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WillampteyMD Fair Judgment System</title>
+    
+    <!-- Cloudflare public alternate CDN network link (Immune to network blocking timeouts) -->
+    <script src="https://cloudflare.com"></script>
 
-        // 2. Core Supabase configuration parameters
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #151f32;
+            --text-main: #f8fafc;
+            --accent-blue: #38bdf8;
+            --accent-green: #4ade80;
+            --accent-red: #f87171;
+            --border: #22314d;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
+        .wrapper { max-width: 1400px; margin: auto; }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
+        .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
+        
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+        
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
+        h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        
+        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
+        input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
+        textarea { height: 100px; resize: vertical; }
+        
+        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s; }
+        button:hover { background: #7dd3fc; transform: translateY(-1px); }
+        
+        .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
+        .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
+        .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
+        .section-title { font-weight: bold; display: block; margin-bottom: 2px; }
+        
+        .status-box { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; text-align: center; }
+        .refresh-btn { background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 8px 15px; font-size: 0.85rem; width: auto; margin: 0; }
+        .refresh-btn:hover { background: rgba(56, 189, 248, 0.1); }
+    </style>
+</head>
+<body>
+
+    <div class="wrapper">
+        <header>
+            <h1>⚖️ WillampteyMD Fair Judgment System</h1>
+            <p class="subtitle">"Quis custodiet ipsos custodes?" — Neutral Equilibrium for the Toxic Triad of AI Governance</p>
+        </header>
+
+        <div class="grid-layout">
+            <div class="card">
+                <h2>🛡️ Creator Defense Intake</h2>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px;">Establish your human idea baseline prior to any secondary generative processing or false detector claims.</p>
+                
+                <form id="judgmentForm">
+                    <label for="projectTitle">Project / Intellectual Asset Title</label>
+                    <input type="text" id="projectTitle" placeholder="e.g., Toxic Triads Book Masterclass" required>
+
+                    <label for="creatorName">Author / Original Creator Name</label>
+                    <input type="text" id="creatorName" placeholder="Your Name or Pseudonym" required>
+
+                    <label for="humanGenesis" style="color: var(--accent-green);">1. Human Genesis (The Original Spark/Outline)</label>
+                    <textarea id="humanGenesis" placeholder="Describe the foundational concept or blueprint you structured BEFORE using any secondary tools..." required></textarea>
+
+                    <label for="workerAI" style="color: #cbd5e1;">2. Worker AI Layer (Generative Enhancer)</label>
+                    <textarea id="workerAI" placeholder="Paste structural details or text expanded via generative models..."></textarea>
+
+                    <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
+                    <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
+
+                    <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
+                </form>
+                <div id="statusNotification" class="status-box"></div>
+            </div>
+
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
+                    <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
+                </div>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
+                
+                <div id="casesDisplayContainer">
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure interface modules...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Unified Configuration Core 
         const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
-        // Initialize natively from the custom local engine module
-        const supabase = window.customSupabaseEngine.createClient(supabaseUrl, supabaseAnonKey);
+     // Initialize directly on the window object to bypass all duplicate declaration blocks
+window.supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-        // 3. Helper function to safely escape HTML data view layouts
+// Create a direct shortcut variable name so the rest of your button scripts match perfectly
+var supabase = window.supabase;
+
+
+
+        // 2. Safe string injection filter utility
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({ 
@@ -63,13 +116,52 @@
             }[tag] || tag));
         }
 
-        // 4. Form Submit Handler (Saves user intake details to database)
+        // 3. Database Content Reader Engine (Fetches and renders system matrix tables)
+        async function loadCasesFromDatabase() {
+            const container = document.getElementById('casesDisplayContainer');
+            if (!container) return;
+            
+            try {
+                const { data, error } = await supabase
+                    .from('cases')
+                    .select('*')
+                    .order('id', { ascending: false })
+                    .limit(10);
+
+                if (error) throw error;
+                
+                if (!data || data.length === 0) {
+                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
+                    return;
+                }
+
+                container.innerHTML = data.map(item => `
+                    <div class="case-item">
+                        <div class="case-header">
+                            <span>Asset: ${escapeHTML(item.title) || 'Untitled'}</span>
+                            <span style="font-size: 0.8rem; color: #64748b;">Author: ${escapeHTML(item.creator) || 'Unknown'}</span>
+                        </div>
+                        <div class="case-section">
+                            <span class="section-title" style="color: var(--accent-green);">1. Human Genesis Baseline:</span>
+                            <p style="margin: 2px 0 0 0; font-style: italic;">${escapeHTML(item.human_genesis) || 'None provided.'}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                console.error("Database Reader Error:", err.message);
+                container.innerHTML = `<p style='color: #f87171; text-align: center; padding: 20px 0;'>Failed to read database records: ${err.message}</p>`;
+            }
+        }
+
+        // 4. Form Submission and Layout Color Engine Handler
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const btn = document.getElementById('submitBtn');
             const statusBox = document.getElementById('statusNotification');
             
+            // Visual transitions to processing state 
             btn.innerText = "Processing Equilibrium Array...";
             btn.style.backgroundColor = "#151f32";
             btn.style.color = "#ffffff";
@@ -77,9 +169,9 @@
             statusBox.style.display = "block";
             statusBox.style.background = "#151f32";
             statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark via integrated layer...";
+            statusBox.innerText = "Transmitting certified human spark via SDK wrapper layer...";
 
-            const payload = {
+                      const payload = {
                 title: document.getElementById('projectTitle').value,
                 creator: document.getElementById('creatorName').value,
                 human_genesis: document.getElementById('humanGenesis').value,
@@ -88,13 +180,14 @@
             };
 
             try {
+                // Submit payload directly using your clean supabase variable
                 const { data, error } = await supabase
                     .from('cases')
                     .insert([payload]);
 
                 if (error) throw error;
 
-                // 🟩 FORCE THE BUTTON AND STATUS NOTIFICATION GREEN INSTANTLY
+                // 🟩 FORCE COLOR TO TURN GREEN INSTANTLY ON SUCCESSFUL DATABASE WRITE
                 btn.style.backgroundColor = '#22c55e'; 
                 btn.style.color = '#ffffff';
                 btn.innerText = '🛡️ Certified & Protected!';
@@ -121,7 +214,7 @@
             }
         });
 
-        // 5. Database Content Reader Engine (Fetches and renders logs)
+        // Database Content Reader Engine (Fetches and renders active cases)
         async function loadCasesFromDatabase() {
             const container = document.getElementById('casesDisplayContainer');
             if (!container) return;
@@ -158,7 +251,7 @@
             }
         }
 
-        // Initialize listener anchors on document launch mount
+        // Initialize listener anchors on layout load page mount
         document.addEventListener('DOMContentLoaded', () => {
             loadCasesFromDatabase();
             
