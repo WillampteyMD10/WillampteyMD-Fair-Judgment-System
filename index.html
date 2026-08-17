@@ -6,6 +6,7 @@
     <title>WillampteyMD Fair Judgment System</title>
     <!-- Native browser injection of the official Supabase Client bundle module -->
     <script src="https://jsdelivr.net"></script>
+
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -94,11 +95,11 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://supabase.co";
-        const SUPABASE_ANON_KEY = "sb_publishable_gvTctmnqx_2oFR6pm_uh4A_wO0EBl3B"; 
+        const supabaseurl = "https://cbqkkipipssgplwbuqrm.supabase.co";
+        const supabaseAnonkey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
 
         // Initialize the official browser library to resolve asymmetric client handshakes automatically
-        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = window.supabase.createClient(supabaseurlL, supabaseanonkey);
 
         document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -202,3 +203,4 @@
 <!-- 3. ADD THESE CLOSING TAGS TO COMPLETE YOUR CODE FILES CORRECTLY -->
 </body>
 </html>
+
