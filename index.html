@@ -101,7 +101,7 @@
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
         // Global Client Initialization using the Cloudflare CDN constructor
-        const supabase = window.supabase ? window.supabase.createClient(supabaseUrl, supabaseAnonKey) : supabaseJs.createClient(supabaseUrl, supabaseAnonKey);
+       const supabase = supabase.createClient(supabaseUrl, supabaseAnonKey);
 
         // 2. Safe string injection filter utility
         function escapeHTML(str) {
