@@ -98,9 +98,7 @@
         const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
         const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
-     // Initialize directly on the window object to bypass all duplicate declaration blocks
-window.supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
+    
 // Create a direct shortcut variable name so the rest of your button scripts match perfectly
 var supabase = window.supabase;
 
