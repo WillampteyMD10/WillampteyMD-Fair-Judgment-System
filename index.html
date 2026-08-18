@@ -418,6 +418,159 @@ var supabase = window.supabase;
 </body> <!-- This is where your code template terminates -->
 
 </script>
+    <!-- ================================================================= -->
+    <!-- SECURED CLOUDFLARE EDGE INTENT ENGINE                            -->
+    <!-- ================================================================= -->
+    
+    <!-- 1. Custom edge-worker link to resolve network blocking -->
+    <script src="https://workers.dev"></script>
+
+    <!-- 2. Core Application Lifecycle and Database Logic Functions -->
+    <script>
+        // Verification Check: Ensure the worker delivers the database library cleanly
+        if (typeof supabase === 'undefined') {
+            alert("LOCAL FAULT CHECK: The edge worker script executed, but the database parameters remain uninitialized. Please confirm your worker route code.");
+            throw new Error("Execution halted: Supabase library object undefined.");
+        }
+
+        const { createClient } = supabase;
+
+        // =============================================================
+        // ⚠️ ACTION REQUIRED: PASTE YOUR ACTUAL COPIED CREDENTIALS HERE
+        // =============================================================
+        const SUPABASE_PROJECT_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
+        const SUPABASE_PUBLIC_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+
+        // Instantiate connection channel object
+        const dbClient = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
+
+        // Core DOM Element Layout Mappings
+        const form = document.getElementById('judgmentForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusBox = document.getElementById('statusNotification');
+        const casesDisplay = document.getElementById('casesDisplayContainer');
+        const refreshBtn = document.getElementById('refreshBtn');
+
+        // Cryptographic Non-Repudiation Processor (Technologist Layer)
+        async function generateIntentHash(title, creator, genesisText) {
+            const dataToSign = `${title.trim()}:${creator.trim()}:${genesisText.trim()}:${new Date().toISOString().split('T')}`;
+            const msgBuffer = new TextEncoder().encode(dataToSign);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // Form Transmission Interceptor Logic
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop default browser reload behaviors to protect data state
+            
+            // Visual Loading Feedback Indicators
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Certifying Intent Layer...';
+            statusBox.style.display = 'block';
+            statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+            statusBox.style.color = '#38bdf8';
+            statusBox.textContent = 'Computing original genesis hash values...';
+
+            const title = document.getElementById('projectTitle').value;
+            const creator = document.getElementById('creatorName').value;
+            const genesis = document.getElementById('humanGenesis').value;
+            const worker = document.getElementById('workerAI').value;
+            const detective = document.getElementById('detectiveVerdict').value;
+
+            try {
+                // Compute immutable SHA-256 string footprint
+                const certifiedHash = await generateIntentHash(title, creator, genesis);
+
+                // Insert structural data arrays down your live Postgres table pipeline
+                const { data, error } = await dbClient
+                    .from('fair_judgments')
+                    .insert([
+                        {
+                            project_title: title,
+                            creator_name: creator,
+                            human_genesis: genesis,
+                            worker_ai: worker,
+                            detective_verdict: detective,
+                            intent_hash: certifiedHash,
+                            certified_at: new Date().toISOString()
+                        }
+                    ]);
+
+                if (error) throw error;
+
+                // Success Output Processing
+                statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                statusBox.style.color = '#4ade80';
+                statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${certifiedHash.substring(0, 32)}...</span>`;
+                form.reset();
+                fetchCertifiedCases(); // Instantly update output display components
+
+            } catch (err) {
+                console.error('System Failure Analysis Flag:', err);
+                statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+                statusBox.style.color = '#f87171';
+                statusBox.textContent = `Certification Failed: ${err.message || err}`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Certify and Protect Intent Layer';
+            }
+        });
+
+        // Review Panel Data Synchronization Loop
+        async function fetchCertifiedCases() {
+            if (!casesDisplay) return;
+            casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 20px 0;">Syncing data logs...</p>';
+            
+            try {
+                const { data: cases, error } = await dbClient
+                    .from('fair_judgments')
+                    .select('*')
+                    .order('certified_at', { ascending: false });
+
+                if (error) throw error;
+
+                if (!cases || cases.length === 0) {
+                    casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">No certified intent profiles found on system nodes.</p>';
+                    return;
+                }
+
+                // Render matching layout blocks dynamically for verified audit lists
+                casesDisplay.innerHTML = cases.map(item => `
+                    <div class="case-item">
+                        <div class="case-header">
+                            <span>📜 ${escapeHTML(item.project_title)}</span>
+                            <span style="font-size:0.8rem; color:#94a3b8;">${new Date(item.certified_at).toLocaleDateString()}</span>
+                        </div>
+                        <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${escapeHTML(item.creator_name)}</div>
+                        <div class="case-section">
+                            <span class="section-title" style="color: #4ade80;">1. Human Genesis Baseline:</span>
+                            <div>${escapeHTML(item.human_genesis)}</div>
+                        </div>
+                        ${item.worker_ai ? `<div class="case-section"><span class="section-title" style="color: #cbd5e1;">2. Generative Enhancements:</span><div>${escapeHTML(item.worker_ai)}</div></div>` : ''}
+                        ${item.detective_verdict ? `<div class="case-section"><span class="section-title" style="color: #f87171;">3. Algorithmic Accusation Stance:</span><div>${escapeHTML(item.detective_verdict)}</div></div>` : ''}
+                        <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">
+                            🔒 CERTIFICATE HASH: ${item.intent_hash}
+                        </div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                casesDisplay.innerHTML = `<p style="color: #f87171; text-align: center; font-size: 0.85rem;">Telemetry Sync Error: ${err.message}</p>`;
+            }
+        }
+
+        // Structural Security Helper: Sanitizes text arrays against code execution vectors
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        // Lifecycle Event Hooks
+        if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
+        
+        // Execute data synchronization sequence immediately after DOM layout stabilization
+        window.addEventListener('DOMContentLoaded', fetchCertifiedCases);
+    </script>
 
 </body>
 </html>
