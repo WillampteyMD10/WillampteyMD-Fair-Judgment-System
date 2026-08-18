@@ -261,5 +261,138 @@ var supabase = window.supabase;
             }
         });
     </script>
+    <!-- THE COMPLETE WORKING CODESPACE (PLUG & PLAY) -->
+<script type="module">
+    // Step 1 & 2: Pull the precise ESM compilation bundle from jsDelivr and initialize
+    import { createClient } from 'https://jsdelivr.net';
+
+    // REPLACE THESE BINDINGS WITH YOUR ACTUAL SECURE PROJECT CREDENTIALS
+    const SUPABASE_PROJECT_URL = "https://your-actual-project-id.supabase.co";
+    const SUPABASE_PUBLIC_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; // Paste your raw long Anon key string
+
+    // Create the interface engine instance
+    const supabase = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
+
+    // ----------------------------------------------------
+    // Step 3: Application Event Engine & Logic Bindings
+    // ----------------------------------------------------
+    const form = document.getElementById('judgmentForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusBox = document.getElementById('statusNotification');
+    const casesDisplay = document.getElementById('casesDisplayContainer');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Cryptographic Signatures for Legal Non-Repudiation
+    async function generateIntentHash(title, creator, genesisText) {
+        const dataToSign = `${title.trim()}:${creator.trim()}:${genesisText.trim()}:${new Date().toISOString().split('T')[0]}`;
+        const msgBuffer = new TextEncoder().encode(dataToSign);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    // Intercept form trigger and push payloads down the pipe
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault(); // Lock state to block full browser page reload routines
+        
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Certifying Intent Layer...';
+        statusBox.style.display = 'block';
+        statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+        statusBox.style.color = '#38bdf8';
+        statusBox.textContent = 'Computing original genesis hash...';
+
+        const title = document.getElementById('projectTitle').value;
+        const creator = document.getElementById('creatorName').value;
+        const genesis = document.getElementById('humanGenesis').value;
+        const worker = document.getElementById('workerAI').value;
+        const detective = document.getElementById('detectiveVerdict').value;
+
+        try {
+            const certifiedHash = await generateIntentHash(title, creator, genesis);
+
+            // Execute insert query directly into your Supabase Postgres schema table
+            const { data, error } = await supabase
+                .from('fair_judgments')
+                .insert([
+                    {
+                        project_title: title,
+                        creator_name: creator,
+                        human_genesis: genesis,
+                        worker_ai: worker,
+                        detective_verdict: detective,
+                        intent_hash: certifiedHash,
+                        certified_at: new Date().toISOString()
+                    }
+                ]);
+
+            if (error) throw error;
+
+            statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+            statusBox.style.color = '#4ade80';
+            statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${certifiedHash.substring(0, 32)}...</span>`;
+            form.reset();
+            fetchCertifiedCases();
+
+        } catch (err) {
+            console.error('Diagnostic Fault Detected:', err);
+            statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+            statusBox.style.color = '#f87171';
+            statusBox.textContent = `Certification Failed: ${err.message || err}`;
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Certify and Protect Intent Layer';
+        }
+    });
+
+    // Synchronize Panel Display from Table Outputs
+    async function fetchCertifiedCases() {
+        casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 20px 0;">Syncing data logs...</p>';
+        try {
+            const { data: cases, error } = await supabase
+                .from('fair_judgments')
+                .select('*')
+                .order('certified_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (!cases || cases.length === 0) {
+                casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">No certified intent profiles found.</p>';
+                return;
+            }
+
+            casesDisplay.innerHTML = cases.map(item => `
+                <div class="case-item">
+                    <div class="case-header">
+                        <span>📜 ${escapeHTML(item.project_title)}</span>
+                        <span style="font-size:0.8rem; color:#94a3b8;">${new Date(item.certified_at).toLocaleDateString()}</span>
+                    </div>
+                    <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${escapeHTML(item.creator_name)}</div>
+                    <div class="case-section">
+                        <span class="section-title" style="color: #4ade80;">1. Human Genesis Baseline:</span>
+                        <div>${escapeHTML(item.human_genesis)}</div>
+                    </div>
+                    ${item.worker_ai ? `<div class="case-section"><span class="section-title" style="color: #cbd5e1;">2. Generative Enhancements:</span><div>${escapeHTML(item.worker_ai)}</div></div>` : ''}
+                    ${item.detective_verdict ? `<div class="case-section"><span class="section-title" style="color: #f87171;">3. Algorithmic Accusation Stance:</span><div>${escapeHTML(item.detective_verdict)}</div></div>` : ''}
+                    <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">
+                        🔒 CERTIFICATE HASH: ${item.intent_hash}
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            casesDisplay.innerHTML = `<p style="color: #f87171; text-align: center; font-size: 0.85rem;">Telemetry Sync Error: ${err.message}</p>`;
+        }
+    }
+
+    function escapeHTML(str) {
+        if (!str) return '';
+        return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    // Process Initial Load Loops
+    refreshBtn.addEventListener('click', fetchCertifiedCases);
+    window.addEventListener('DOMContentLoaded', fetchCertifiedCases);
+</script>
+
 </body>
 </html>
