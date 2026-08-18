@@ -418,40 +418,49 @@ var supabase = window.supabase;
 </body> <!-- This is where your code template terminates -->
 
 </script>
-    <!-- ================================================================= -->
-    <!-- SECURED CLOUDFLARE EDGE INTENT ENGINE                            -->
+        <!-- ================================================================= -->
+    <!-- UNIFIED NATIVE IMPORT MAP INTENT LAYER PROTECTION                 -->
     <!-- ================================================================= -->
     
-    <!-- 1. Custom edge-worker link to resolve network blocking -->
-    <script src="https://workers.dev"></script>
+    <!-- Declares a native browser link mapping to bypass network CDNs safely -->
+    <script type="importmap">
+      {
+        "imports": {
+          "supabase-core": "https://cloudflare.com"
+        }
+      }
+    </script>
 
-    <!-- 2. Core Application Lifecycle and Database Logic Functions -->
-    <script>
-        // Verification Check: Ensure the worker delivers the database library cleanly
+    <!-- Execute as an isolated runtime module to prevent duplicate variable naming crashes -->
+    <script type="module">
+        import "supabase-core";
+
+        // Intercept execution tracking if local network nodes fail entirely
         if (typeof supabase === 'undefined') {
-            alert("LOCAL FAULT CHECK: The edge worker script executed, but the database parameters remain uninitialized. Please confirm your worker route code.");
-            throw new Error("Execution halted: Supabase library object undefined.");
+            alert("CRITICAL LINK DROPOUT: The database connection files could not be initialized by the browser engine. Please verify internet access routes.");
+            throw new Error("Execution halted: Supabase variable undefined.");
         }
 
-        const { createClient } = supabase;
+        // Initialize unique scoped environment keys
+        const coreClient = supabase.createClient;
 
         // =============================================================
-        // ⚠️ ACTION REQUIRED: PASTE YOUR ACTUAL COPIED CREDENTIALS HERE
+        // ⚠️ DEPLOYMENT VALUES: CONFIRM YOUR CHOSEN COPIED DATA ENTRIES
         // =============================================================
-        const SUPABASE_PROJECT_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-        const SUPABASE_PUBLIC_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+        const TARGET_PROJECT_URL = "https://supabase.co"; 
+        const TARGET_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
 
-        // Instantiate connection channel object
-        const dbClient = createClient(SUPABASE_PROJECT_URL, SUPABASE_PUBLIC_ANON_KEY);
+        // Establish connection instance gateway
+        const dbClient = coreClient(TARGET_PROJECT_URL, TARGET_PUBLIC_KEY);
 
-        // Core DOM Element Layout Mappings
+        // Core Interface Element Lookups
         const form = document.getElementById('judgmentForm');
         const submitBtn = document.getElementById('submitBtn');
         const statusBox = document.getElementById('statusNotification');
         const casesDisplay = document.getElementById('casesDisplayContainer');
         const refreshBtn = document.getElementById('refreshBtn');
 
-        // Cryptographic Non-Repudiation Processor (Technologist Layer)
+        // Cryptographic Non-Repudiation Processing Engine
         async function generateIntentHash(title, creator, genesisText) {
             const dataToSign = `${title.trim()}:${creator.trim()}:${genesisText.trim()}:${new Date().toISOString().split('T')}`;
             const msgBuffer = new TextEncoder().encode(dataToSign);
@@ -460,11 +469,10 @@ var supabase = window.supabase;
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Form Transmission Interceptor Logic
+        // Form Click Interception Routine
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Stop default browser reload behaviors to protect data state
+            e.preventDefault(); // Stop default browser reload tracking to save input fields
             
-            // Visual Loading Feedback Indicators
             submitBtn.disabled = true;
             submitBtn.textContent = 'Certifying Intent Layer...';
             statusBox.style.display = 'block';
@@ -479,10 +487,9 @@ var supabase = window.supabase;
             const detective = document.getElementById('detectiveVerdict').value;
 
             try {
-                // Compute immutable SHA-256 string footprint
+                // Compute immutable SHA-256 file fingerprint values
                 const certifiedHash = await generateIntentHash(title, creator, genesis);
 
-                // Insert structural data arrays down your live Postgres table pipeline
                 const { data, error } = await dbClient
                     .from('fair_judgments')
                     .insert([
@@ -499,12 +506,12 @@ var supabase = window.supabase;
 
                 if (error) throw error;
 
-                // Success Output Processing
+                // Success Message Layout Updates
                 statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
                 statusBox.style.color = '#4ade80';
                 statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${certifiedHash.substring(0, 32)}...</span>`;
                 form.reset();
-                fetchCertifiedCases(); // Instantly update output display components
+                fetchCertifiedCases();
 
             } catch (err) {
                 console.error('System Failure Analysis Flag:', err);
@@ -517,7 +524,7 @@ var supabase = window.supabase;
             }
         });
 
-        // Review Panel Data Synchronization Loop
+        // Live Dynamic Panel Feed Data Sync Loops
         async function fetchCertifiedCases() {
             if (!casesDisplay) return;
             casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 20px 0;">Syncing data logs...</p>';
@@ -535,7 +542,6 @@ var supabase = window.supabase;
                     return;
                 }
 
-                // Render matching layout blocks dynamically for verified audit lists
                 casesDisplay.innerHTML = cases.map(item => `
                     <div class="case-item">
                         <div class="case-header">
@@ -559,18 +565,16 @@ var supabase = window.supabase;
             }
         }
 
-        // Structural Security Helper: Sanitizes text arrays against code execution vectors
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
         }
 
-        // Lifecycle Event Hooks
         if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
-        
-        // Execute data synchronization sequence immediately after DOM layout stabilization
-        window.addEventListener('DOMContentLoaded', fetchCertifiedCases);
+        fetchCertifiedCases();
     </script>
+
+    
 
 </body>
 </html>
