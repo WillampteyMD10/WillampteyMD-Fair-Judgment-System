@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
     
-   
     <style>
         :root {
             --bg-color: #0b0f19;
@@ -93,177 +92,9 @@
         </div>
     </div>
 
-    <script>
-        // 1. Unified Configuration Core 
-        const supabaseUrl = "https://cbqkkipipssgplwbuqrm.supabase.co";
-        const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
-
-    
-// Create a direct shortcut variable name so the rest of your button scripts match perfectly
-var supabase = window.supabase;
-
-
-
-        // 2. Safe string injection filter utility
-        function escapeHTML(str) {
-            if (!str) return '';
-            return str.replace(/[&<>'"]/g, tag => ({ 
-                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' 
-            }[tag] || tag));
-        }
-
-        // 3. Database Content Reader Engine (Fetches and renders system matrix tables)
-        async function loadCasesFromDatabase() {
-            const container = document.getElementById('casesDisplayContainer');
-            if (!container) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('cases')
-                    .select('*')
-                    .order('id', { ascending: false })
-                    .limit(10);
-
-                if (error) throw error;
-                
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
-                    return;
-                }
-
-                container.innerHTML = data.map(item => `
-                    <div class="case-item">
-                        <div class="case-header">
-                            <span>Asset: ${escapeHTML(item.title) || 'Untitled'}</span>
-                            <span style="font-size: 0.8rem; color: #64748b;">Author: ${escapeHTML(item.creator) || 'Unknown'}</span>
-                        </div>
-                        <div class="case-section">
-                            <span class="section-title" style="color: var(--accent-green);">1. Human Genesis Baseline:</span>
-                            <p style="margin: 2px 0 0 0; font-style: italic;">${escapeHTML(item.human_genesis) || 'None provided.'}</p>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error("Database Reader Error:", err.message);
-                container.innerHTML = `<p style='color: #f87171; text-align: center; padding: 20px 0;'>Failed to read database records: ${err.message}</p>`;
-            }
-        }
-
-        // 4. Form Submission and Layout Color Engine Handler
-        document.getElementById('judgmentForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const btn = document.getElementById('submitBtn');
-            const statusBox = document.getElementById('statusNotification');
-            
-            // Visual transitions to processing state 
-            btn.innerText = "Processing Equilibrium Array...";
-            btn.style.backgroundColor = "#151f32";
-            btn.style.color = "#ffffff";
-
-            statusBox.style.display = "block";
-            statusBox.style.background = "#151f32";
-            statusBox.style.color = "#ffffff";
-            statusBox.innerText = "Transmitting certified human spark via SDK wrapper layer...";
-
-                      const payload = {
-                title: document.getElementById('projectTitle').value,
-                creator: document.getElementById('creatorName').value,
-                human_genesis: document.getElementById('humanGenesis').value,
-                worker_ai_use: document.getElementById('workerAI').value,
-                detective_ai_accusation: document.getElementById('detectiveVerdict').value
-            };
-
-            try {
-                // Submit payload directly using your clean supabase variable
-                const { data, error } = await supabase
-                    .from('cases')
-                    .insert([payload]);
-
-                if (error) throw error;
-
-                // 🟩 FORCE COLOR TO TURN GREEN INSTANTLY ON SUCCESSFUL DATABASE WRITE
-                btn.style.backgroundColor = '#22c55e'; 
-                btn.style.color = '#ffffff';
-                btn.innerText = '🛡️ Certified & Protected!';
-
-                statusBox.style.background = "#064e3b";
-                statusBox.style.color = "#4ade80";
-                statusBox.innerText = "✅ Human Genesis Certified! Case safely logged in the Fair Judgment matrix.";
-                
-                // Fire your custom alert timestamp notification
-                alert("Genesis Proof Captured! Your idea is officially timestamped.");
-
-                document.getElementById('judgmentForm').reset();
-                await loadCasesFromDatabase();
-
-            } catch (error) {
-                btn.style.backgroundColor = 'var(--accent-blue)'; 
-                btn.style.color = '#0b0f19';
-                btn.innerText = "Certify and Protect Intent Layer";
-
-                statusBox.style.background = "#7f1d1d";
-                statusBox.style.color = "#f87171";
-                statusBox.innerText = `❌ System Block: ${error.message || 'Handshake rejected'}`;
-                console.error("SDK Execution Trace:", error);
-            }
-        });
-
-        // Database Content Reader Engine (Fetches and renders active cases)
-        async function loadCasesFromDatabase() {
-            const container = document.getElementById('casesDisplayContainer');
-            if (!container) return;
-            
-            try {
-                const { data, error } = await supabase
-                    .from('cases')
-                    .select('*')
-                    .order('id', { ascending: false })
-                    .limit(10);
-
-                if (error) throw error;
-                
-                if (!data || data.length === 0) {
-                    container.innerHTML = `<p style='color: #64748b; text-align: center; padding: 40px 0;'>Database empty. Ready for human entries.</p>`;
-                    return;
-                }
-
-                container.innerHTML = data.map(item => `
-                    <div class="case-item">
-                        <div class="case-header">
-                            <span>Asset: ${escapeHTML(item.title) || 'Untitled'}</span>
-                            <span style="font-size: 0.8rem; color: #64748b;">Author: ${escapeHTML(item.creator) || 'Unknown'}</span>
-                        </div>
-                        <div class="case-section">
-                            <span class="section-title" style="color: var(--accent-green);">1. Human Genesis Baseline:</span>
-                            <p style="margin: 2px 0 0 0; font-style: italic;">${escapeHTML(item.human_genesis) || 'None provided.'}</p>
-                        </div>
-                    </div>
-                `).join('');
-
-            } catch (err) {
-                console.error("Database Reader Error:", err.message);
-            }
-        }
-
-        // Initialize listener anchors on layout load page mount
-        document.addEventListener('DOMContentLoaded', () => {
-            loadCasesFromDatabase();
-            
-            const refreshBtn = document.getElementById('refreshBtn');
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', loadCasesFromDatabase);
-            }
-        });
-
-
-</script>
-            <!-- ================================================================= -->
+    <!-- ================================================================= -->
     <!-- UNIFIED NATIVE IMPORT MAP INTENT LAYER PROTECTION                 -->
     <!-- ================================================================= -->
-    
-    <!-- Native browser mapping to securely fetch your database drivers -->
     <script type="importmap">
       {
         "imports": {
@@ -272,46 +103,42 @@ var supabase = window.supabase;
       }
     </script>
 
-    <!-- Executing inside an isolated module context protects against variable collisions -->
     <script type="module">
         import "supabase-core";
 
-        // Interceptor Check: Verifies the driver is cleanly initialized in memory
+        // Verification Interceptor: Check browser runtime initialization
         if (typeof supabase === 'undefined') {
-            alert("CRITICAL LINK DROPOUT: The database connection files could not be initialized by the browser engine. Please verify internet access routes.");
-            throw new Error("Execution halted: Supabase variable undefined.");
+            alert("CRITICAL CORE LAYER DROP: The browser engine failed to compile database communication modules.");
+            throw new Error("Execution halted: Engine parameters undefined.");
         }
 
-        const coreClient = supabase.createClient;
-
         // =============================================================
-        // ⚠️ DEPLOYMENT VALUES: OVERWRITE WITH YOUR ACTUAL CREDENTIALS
+        // ⚠️ DATA STACK BINDINGS: OVERWRITE WITH YOUR LIVE CREDENTIALS
         // =============================================================
-        const TARGET_PROJECT_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-        const TARGET_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
+        const PROJECT_ENDPOINT_URL = "https://supabase.co"; 
+        const PROJECT_ANON_PUBLIC_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."; 
 
-        // Instantiate database channel pipeline
-        const dbClient = coreClient(TARGET_PROJECT_URL, TARGET_PUBLIC_KEY);
+        const dbClient = supabase.createClient(PROJECT_ENDPOINT_URL, PROJECT_ANON_PUBLIC_KEY);
 
-        // UI Document Selectors
+        // Core Document Layout Selectors
         const form = document.getElementById('judgmentForm');
         const submitBtn = document.getElementById('submitBtn');
         const statusBox = document.getElementById('statusNotification');
         const casesDisplay = document.getElementById('casesDisplayContainer');
         const refreshBtn = document.getElementById('refreshBtn');
 
-        // Cryptographic Non-Repudiation Processing Engine
+        // Cryptographic Footprint Generator
         async function generateIntentHash(title, creator, genesisText) {
-            const dataToSign = `${title.trim()}:${creator.trim()}:${genesisText.trim()}:${new Date().toISOString().split('T')}`;
+            const dataToSign = `${title.trim()}:${creator.trim()}:${genesisText.trim()}:${new Date().toISOString().split('T')[0]}`;
             const msgBuffer = new TextEncoder().encode(dataToSign);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        // Form Submission Interception Routine
+        // Integrated Form Transmission Processing Loop
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Secure form data state against browser reloads
+            e.preventDefault();
             
             submitBtn.disabled = true;
             submitBtn.textContent = 'Certifying Intent Layer...';
@@ -327,7 +154,6 @@ var supabase = window.supabase;
             const detective = document.getElementById('detectiveVerdict').value;
 
             try {
-                // Compute immutable SHA-256 file fingerprint values
                 const certifiedHash = await generateIntentHash(title, creator, genesis);
 
                 const { data, error } = await dbClient
@@ -346,65 +172,6 @@ var supabase = window.supabase;
 
                 if (error) throw error;
 
-                // Success Message Layout Updates
-                statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
-                statusBox.style.color = '#4ade80';
-                statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${certifiedHash.substring(0, 32)}...</span>`;
-                form.reset();
-                fetchCertifiedCases();
-
-            } catch (err) {
-                console.error('System Failure Analysis Flag:', err);
-                statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
-                statusBox.style.color = '#f87171';
-                statusBox.textContent = `Certification Failed: ${err.message || err}`;
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Certify and Protect Intent Layer';
-            }
-        });
-
-        // Live Dynamic Panel Feed Data Sync Loops
-        async function fetchCertifiedCases() {
-            if (!casesDisplay) return;
-            casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 20px 0;">Syncing data logs...</p>';
-            
-            try {
-                const { data: cases, error } = await dbClient
-                    .from('fair_judgments')
-                    .select('*')
-                    .order('certified_at', { ascending: false });
-
-                if (error) throw error;
-
-                if (!cases || cases.length === 0) {
-                    casesDisplay.innerHTML = '<p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">No certified intent profiles found on system nodes.</p>';
-                    return;
-                }
-
-                casesDisplay.innerHTML = cases.map(item => `
-                    <div class="case-item">
-                        <div class="case-header">
-                            <span>📜 ${escapeHTML(item.project_title)}</span>
-                            <span style="font-size:0.8rem; color:#94a3b8;">${new Date(item.certified_at).toLocaleDateString()}</span>
-                        </div>
-                        <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${escapeHTML(item.creator_name)}</div>
-                        <div class="case-section">
-                            <span class="section-title" style="color: #4ade80;">1. Human Genesis Baseline:</span>
-                            <div>${escapeHTML(item.human_genesis)}</div>
-                        </div>
-                        ${item.worker_ai ? `<div class="case-section"><span class="section-title" style="color: #cbd5e1;">2. Generative Enhancements:</span><div>${escapeHTML(item.worker_ai)}</div></div>` : ''}
-                        ${item.detective_verdict ? `<div class="case-section"><span class="section-title" style="color: #f87171;">3. Algorithmic Accusation Stance:</span><div>${escapeHTML(item.detective_verdict)}</div></div>` : ''}
-                        <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">
-                            🔒 CERTIFICATE HASH: ${item.intent_hash}
-                        </div>
-                    </div>
-                `).join('');
-            } catch (err) {
-                casesDisplay.innerHTML = `<p style="color: #f87171; text-align: center; font-size: 0.85rem;">Telemetry Sync Error: ${err.message}</p>`;
-            }
-        }
-
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -413,7 +180,5 @@ var supabase = window.supabase;
         if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
         fetchCertifiedCases();
     </script>
-
-
 </body>
 </html>
