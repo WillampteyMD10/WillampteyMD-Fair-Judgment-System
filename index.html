@@ -66,11 +66,15 @@
             </div>
         </div>
     </div>
-        <!-- ================================================================= -->
-    <!-- CORRECTED STATIC IMPORT MAP BINDINGS                              -->
+           <!-- ================================================================= -->
+    <!-- CACHE-BUSTER IMPORT MAP CONFIGURATION                             -->
     <!-- ================================================================= -->
     <script type="importmap">
-      { "imports": { "supabase-core": "https://cloudflare.com" } }
+      { 
+        "imports": { 
+          "supabase-core": "https://cloudflare.com" 
+        } 
+      }
     </script>
     <script type="module">
         import "supabase-core";
@@ -78,6 +82,7 @@
             alert("CRITICAL STORAGE FAULT: Initialization failure.");
             throw new Error("Execution halted.");
         }
+
 
         
         // =============================================================
