@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Put it right here, at the very beginning of your <head> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WillampteyMD Fair Judgment System</title>
-    <style>
-        :root { --bg-color: #0b0f19; --card-bg: #151f32; --text-main: #f8fafc; --accent-blue: #38bdf8; --accent-green: #4ade80; --accent-red: #f87171; --border: #22314d; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
-        .wrapper { max-width: 1400px; margin: auto; }
-        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-        h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
-        .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
-        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-        @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
-        h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
-        input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
-        textarea { height: 100px; resize: vertical; }
-        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 20px; transition: all 0.2s; }
-        button:hover { background: #7dd3fc; transform: translateY(-1px); }
-        .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
-        .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
-        .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
-        .section-title { font-weight: bold; display: block; margin-bottom: 2px; }
-        .status-box { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; text-align: center; }
-        .refresh-btn { background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 8px 15px; font-size: 0.85rem; width: auto; margin: 0; }
-        .refresh-btn:hover { background: rgba(56, 189, 248, 0.1); }
-    </style>
+    <title>Fair Judgement Certified</title>
+
+    <!-- 1. PASTE THE FIX HERE -->
+    <script type="importmap">
+      {
+        "imports": {
+          "supabase-core": "https://jsdelivr.net"
+        }
+      }
+    </script>
+
+    <!-- 2. PASTE THE INITIALIZATION HERE -->
+    <script type="module">
+        import { createClient } from "supabase-core";
+        window.supabase = { createClient };
+
+        if (typeof supabase === 'undefined') {
+            alert("CRITICAL STORAGE FAULT: Initialization failure.");
+            throw new Error("Execution halted.");
+        }
+        console.log("Supabase core module loaded successfully!");
+    </script>
+
+    <!-- Any other stylesheets or configurations go BELOW this line -->
 </head>
 <body>
     <div class="wrapper">
