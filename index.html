@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Put it right here, at the very beginning of your <head> -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fair Judgement Certified</title>
 
-    <!-- 1. PASTE THE FIX HERE -->
+    <!-- THERE MUST ONLY BE ONE IMPORT MAP HERE -->
     <script type="importmap">
       {
         "imports": {
@@ -15,21 +14,16 @@
       }
     </script>
 
-    <!-- 2. PASTE THE INITIALIZATION HERE -->
+    <!-- INITIALIZE MODULE -->
     <script type="module">
         import { createClient } from "supabase-core";
         window.supabase = { createClient };
-
-        if (typeof supabase === 'undefined') {
-            alert("CRITICAL STORAGE FAULT: Initialization failure.");
-            throw new Error("Execution halted.");
-        }
-        console.log("Supabase core module loaded successfully!");
+        console.log("Supabase successfully initialized globally.");
     </script>
-
-    <!-- Any other stylesheets or configurations go BELOW this line -->
 </head>
 <body>
+    <!-- YOUR INTERFACE MARKUP CONTINUES HERE -->
+
     <div class="wrapper">
         <header>
             <h1>⚖️ WillampteyMD Fair Judgment System</h1>
