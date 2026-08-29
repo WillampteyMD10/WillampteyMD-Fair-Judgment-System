@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WillampteyMD Fair Judgment System</title>
-    <!-- Content-Security-Policy header is set via vercel.json; meta is fallback -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://cdn.jsdelivr.net https://www.google.com; script-src 'self' https://cdn.jsdelivr.net https://www.google.com; connect-src 'self' https://cbqkkipipssgplwbuqrm.supabase.co https://www.google.com; object-src 'none'; frame-ancestors 'none';">
     <style>
         :root { --bg-color: #0b0f19; --card-bg: #151f32; --text-main: #f8fafc; --accent-blue: #38bdf8; --accent-green: #4ade80; --accent-red: #f87171; --border: #22314d; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
@@ -20,7 +18,7 @@
         label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
         input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
         textarea { height: 100px; resize: vertical; }
-        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 16px; }
+        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top:[...]
         button:hover { background: #7dd3fc; transform: translateY(-1px); }
         .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
         .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
@@ -61,35 +59,44 @@
                     <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
                     <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
                 </div>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positi[...]
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false po[...]
                 <div id="casesDisplayContainer">
                     <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure interface modules...</p>
                 </div>
             </div>
         </div>
     </div>
+           <!-- ================================================================= -->
+    <!-- CACHE-BUSTER IMPORT MAP CONFIGURATION                             -->
+    <!-- ================================================================= -->
+    <script type="importmap">
+      { 
+        "imports": { 
+          "supabase-core": "https://cloudflare.com" 
+        } 
+      }
+    </script>
+    <script type="module">
+        import "supabase-core";
+        if (typeof supabase === 'undefined') {
+            alert("CRITICAL STORAGE FAULT: Initialization failure.");
+            throw new Error("Execution halted.");
+        }
 
-    <!-- reCAPTCHA v3 (replace RECAPTCHA_SITE_KEY with your site key) -->
-    <script src="https://www.google.com/recaptcha/api.js?render=RECAPTCHA_SITE_KEY" async defer></script>
 
-    <script>
-        // Client now talks to serverless endpoints that keep your keys secret.
-        const CERTIFY_URL = '/api/certify';
-        const CASES_URL = '/api/cases';
+        
+        // =============================================================
+        // ⚠️ EDIT CONFIGURATION BINDINGS HERE
+        // =============================================================
+        const ENDPOINT = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
+        const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coH[...]"
 
+        const dbClient = supabase.createClient(ENDPOINT, ANON_KEY);
         const form = document.getElementById('judgmentForm');
         const submitBtn = document.getElementById('submitBtn');
         const statusBox = document.getElementById('statusNotification');
         const casesDisplay = document.getElementById('casesDisplayContainer');
         const refreshBtn = document.getElementById('refreshBtn');
-
-        function showStatus(message, type='info'){
-            statusBox.style.display = 'block';
-            if(type==='ok'){ statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)'; statusBox.style.color = '#4ade80'; }
-            else if(type==='err'){ statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)'; statusBox.style.color = '#f87171'; }
-            else { statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)'; statusBox.style.color = '#38bdf8'; }
-            statusBox.innerHTML = message;
-        }
 
         async function generateIntentHash(t, c, g) {
             const d = `${t.trim()}:${c.trim()}:${g.trim()}:${new Date().toISOString().split('T')}`;
@@ -98,89 +105,66 @@
             return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
         }
 
-        function sanitizeInput(s, maxLen=2000){
-            if(!s) return '';
-            return s.toString().slice(0, maxLen);
-        }
-
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
             submitBtn.textContent = 'Certifying Intent Layer...';
-            showStatus('Computing original genesis hash values...');
-
-            const t = sanitizeInput(document.getElementById('projectTitle').value, 200);
-            const c = sanitizeInput(document.getElementById('creatorName').value, 100);
-            const g = sanitizeInput(document.getElementById('humanGenesis').value, 4000);
-            const w = sanitizeInput(document.getElementById('workerAI').value, 4000);
-            const dv = sanitizeInput(document.getElementById('detectiveVerdict').value, 1000);
-
+            statusBox.style.display = 'block';
+            statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+            statusBox.style.color = '#38bdf8';
+            statusBox.textContent = 'Computing original genesis hash values...';
+            const t = document.getElementById('projectTitle').value;
+            const c = document.getElementById('creatorName').value;
+            const g = document.getElementById('humanGenesis').value;
+            const w = document.getElementById('workerAI').value;
+            const dv = document.getElementById('detectiveVerdict').value;
             try {
                 const hash = await generateIntentHash(t, c, g);
-
-                // Acquire reCAPTCHA v3 token (requires RECAPTCHA_SITE_KEY replaced with your site key)
-                if (typeof grecaptcha !== 'undefined' && 'execute' in grecaptcha){
-                    await grecaptcha.ready();
-                    const token = await grecaptcha.execute('RECAPTCHA_SITE_KEY', { action: 'submit' });
-
-                    const body = { project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, captcha_token: token };
-
-                    const res = await fetch(CERTIFY_URL, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(body)
-                    });
-
-                    if(!res.ok){
-                        const err = await res.text();
-                        throw new Error(err || 'Server error');
-                    }
-
-                    showStatus(`🛡️ Intent Layer Certified!<br><span style=\"font-size:0.75rem; font-family:monospace; color:#cbd5e1;\">Hash: ${hash.substring(0,32)}...</span>`, 'ok');
-                    form.reset();
-                    fetchCertifiedCases();
-                } else {
-                    // grecaptcha not available
-                    throw new Error('reCAPTCHA not loaded. Ensure RECAPTCHA_SITE_KEY is set and the site includes the reCAPTCHA script.');
-                }
+                const { error } = await dbClient.from('fair_judgments').insert([{ project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, cert[...]
+                if (error) throw error;
+                statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                statusBox.style.color = '#4ade80';
+                statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${hash.substring(0, 32)}...</span>`;
+                form.reset();
+                fetchCertifiedCases();
             } catch (err) {
                 console.error(err);
-                showStatus(`Certification Failed: ${err.message || JSON.stringify(err)}`, 'err');
+                statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+                statusBox.style.color = '#f87171';
+                statusBox.textContent = `Certification Failed: ${err.message || JSON.stringify(err)}`;
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Certify and Protect Intent Layer';
             }
         });
 
-        async function fetchCertifiedCases(){
-            if(!casesDisplay) return;
+        async function fetchCertifiedCases() {
+            if (!casesDisplay) return;
             casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:20px 0;">Syncing...</p>';
-            try{
-                const res = await fetch(CASES_URL);
-                if(!res.ok) throw new Error('Failed to fetch cases');
-                const cases = await res.json();
-                if(!cases || cases.length===0){
+            try {
+                const { data: cases, error } = await dbClient.from('fair_judgments').select('*').order('certified_at', { ascending: false });
+                if (error) throw error;
+                if (!cases || cases.length === 0) {
                     casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:40px 0;">No certified intent profiles found.</p>';
                     return;
                 }
-                casesDisplay.innerHTML = cases.map(i=>`
+                casesDisplay.innerHTML = cases.map(i => `
                     <div class="case-item">
-                        <div class="case-header"><span>📜 ${esc(i.project_title)}</span><span style="font-size:0.8rem; color:#94a3b8;">${new Date(i.certified_at).toLocaleDateString()}</span></div>
+                        <div class="case-header"><span>📜 ${esc(i.project_title)}</span><span style="font-size:0.8rem; color:#94a3b8;">${new Date(i.certified_at).toLocaleDateString()}</span></d[...]
                         <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${esc(i.creator_name)}</div>
                         <div class="case-section"><span class="section-title" style="color:#4ade80;">1. Human Genesis Baseline:</span><div>${esc(i.human_genesis)}</div></div>
-                        ${"${i.worker_ai}" ? `<div class=\"case-section\"><span class=\"section-title\" style=\"color:#cbd5e1;\">2. Generative Enhancements:</span><div>${esc(i.worker_ai)}</div></div>` : ''}
-                        ${"${i.detective_verdict}" ? `<div class=\"case-section\"><span class=\"section-title\" style=\"color:#f87171;\">3. Algorithmic Accusation Stance:</span><div>${esc(i.detective_verdict)}</div></div>` : ''}
-                        <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">🔒 CERTIFICATE HASH: ${esc(i.intent_hash || '')}</div>
+                        ${i.worker_ai ? `<div class="case-section"><span class="section-title" style="color:#cbd5e1;">2. Generative Enhancements:</span><div>${esc(i.worker_ai)}</div></div>` : ''}
+                        ${i.detective_verdict ? `<div class="case-section"><span class="section-title" style="color:#f87171;">3. Algorithmic Accusation Stance:</span><div>${esc(i.detective_verdic[...]
+                        <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">🔒 CERTIFICA[...]
                     </div>
                 `).join('');
-            }catch(err){
+            } catch (err) {
                 casesDisplay.innerHTML = `<p style="color:#f87171; text-align:center; font-size:0.85rem;">Sync Error: ${err.message || JSON.stringify(err)}</p>`;
             }
         }
 
-        function esc(s){ return s? s.replace(/[&<>"']/g, t => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[t])): ''; }
-
-        if(refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
+        function esc(s) { return s ? s.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ''; }
+        if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
         fetchCertifiedCases();
     </script>
 </body>
