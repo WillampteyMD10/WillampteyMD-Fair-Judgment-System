@@ -18,7 +18,7 @@
         label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
         input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
         textarea { height: 100px; resize: vertical; }
-        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top:[...]
+        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 15px; }
         button:hover { background: #7dd3fc; transform: translateY(-1px); }
         .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
         .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
@@ -59,7 +59,7 @@
                     <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
                     <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
                 </div>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false po[...]
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives from human intent claims.</p>
                 <div id="casesDisplayContainer">
                     <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure interface modules...</p>
                 </div>
@@ -81,7 +81,7 @@
         // For security, do NOT commit real anon keys to public repos. Replace these placeholders
         // during deployment via environment variables or a server-side endpoint.
         const ENDPOINT = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-        const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
+        const ANON_KEY = "REPLACE_WITH_ANON_KEY_OR_ENV";
 
         const dbClient = createClient(ENDPOINT, ANON_KEY);
         const form = document.getElementById('judgmentForm');
@@ -91,7 +91,7 @@
         const refreshBtn = document.getElementById('refreshBtn');
 
         async function generateIntentHash(t, c, g) {
-            const d = `${t.trim()}:${c.trim()}:${g.trim()}:${new Date().toISOString().split('T')}`;
+            const d = `${t.trim()}:${c.trim()}:${g.trim()}:${new Date().toISOString().split('T')[0]}`;
             const b = new TextEncoder().encode(d);
             const h = await crypto.subtle.digest('SHA-256', b);
             return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
@@ -112,7 +112,8 @@
             const dv = document.getElementById('detectiveVerdict').value;
             try {
                 const hash = await generateIntentHash(t, c, g);
-                const { error } = await dbClient.from('fair_judgments').insert([{ project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, certified_at: new Date().toISOString() }]);
+                // Insert a certified record into the Supabase table. Adjust column names if your schema differs.
+                const { data, error } = await dbClient.from('fair_judgments').insert([{ project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, certified: true, certified_at: new Date().toISOString() }]);
                 if (error) throw error;
                 statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
                 statusBox.style.color = '#4ade80';
@@ -152,11 +153,13 @@
                 `).join('');
             } catch (err) {
                 casesDisplay.innerHTML = `<p style="color:#f87171; text-align:center; font-size:0.85rem;">Sync Error: ${err.message || JSON.stringify(err)}</p>`;
+                console.error('fetchCertifiedCases error:', err);
             }
         }
 
-        function esc(s) { return s ? s.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ''; }
+        function esc(s) { return s ? String(s).replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ''; }
         if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
+        // Initial load
         fetchCertifiedCases();
     </script>
 </body>
