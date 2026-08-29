@@ -162,6 +162,49 @@
         // Initial load
         fetchCertifiedCases();
     </script>
+    <!-- Floating Export Control Center -->
+<div class="export-container" style="text-align: center; margin: 40px 0; padding: 20px; border-top: 1px dashed #eaeaea;">
+    <button onclick="window.print()" style="
+        background-color: #111111;
+        color: #ffffff;
+        border: 1px solid #111111;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: all 0.2s ease;
+    " onmouseover="this.style.backgroundColor='#0070f3'; this.style.borderColor='#0070f3';" onmouseout="this.style.backgroundColor='#111111'; this.style.borderColor='#111111';">
+        <span>📜</span> Export Certified System Ledger (PDF)
+    </button>
+</div>
+
+<!-- Print Formatting Style Override -->
+<style>
+@media print {
+    /* Hide inputs, titles, buttons, and panels on export */
+    .export-container, form, button, .ui-panel, input, textarea, h2 {
+        display: none !important;
+    }
+    /* Format the printable ledger layout */
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: serif;
+        padding: 0;
+    }
+    /* Ensure each case prints beautifully without awkward breaks */
+    blockquote, div[style*="CERTIFICATE HASH"] {
+        page-break-inside: avoid;
+    }
+}
+</style>
+
 </body>
 </html>
 
