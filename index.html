@@ -77,18 +77,18 @@
   }
 </script>
 
-  }
+<script type="module">
+    import { createClient } from "supabase-core";
+    
+    // Bind to window to satisfy your downstream global variable checks
+    window.supabase = { createClient };
+
+    if (typeof supabase === 'undefined') {
+        alert("CRITICAL STORAGE FAULT: Initialization failure.");
+        throw new Error("Execution halted.");
+    }
+    console.log("Supabase core module loaded successfully!");
 </script>
-      }
-    </script>
-    <script type="module">
-        import "supabase-core";
-        if (typeof supabase === 'undefined') {
-            alert("CRITICAL STORAGE FAULT: Initialization failure.");
-            throw new Error("Execution halted.");
-        }
-
-
         
         // =============================================================
         // ⚠️ EDIT CONFIGURATION BINDINGS HERE
