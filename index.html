@@ -1,169 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>WillampteyMD Fair Judgment System</title>
-  <style>
-    :root { --bg-color: #0b0f19; --card-bg: #151f32; --text-main: #f8fafc; --accent-blue: #38bdf8; --accent-green: #4ade80; --accent-red: #f87171; --border: #22314d; }
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
-    .wrapper { max-width: 1400px; margin: auto; }
-    header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
-    h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
-    .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
-    .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
-    @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
-    .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
-    h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
-    label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
-    input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
-    textarea { height: 100px; resize: vertical; }
-    button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 16px; }
-    button:hover { background: #7dd3fc; transform: translateY(-1px); }
-    .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
-    .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
-    .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
-    .section-title { font-weight: bold; display: block; margin-bottom: 2px; }
-    .status-box { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; text-align: center; }
-    .refresh-btn { background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 8px 15px; font-size: 0.85rem; width: auto; margin: 0; }
-    .refresh-btn:hover { background: rgba(56, 189, 248, 0.1); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WillampteyMD Fair Judgment System</title>
+    <style>
+        :root { --bg-color: #0b0f19; --card-bg: #151f32; --text-main: #f8fafc; --accent-blue: #38bdf8; --accent-green: #4ade80; --accent-red: #f87171; --border: #22314d; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg-color); color: var(--text-main); margin: 0; padding: 30px; }
+        .wrapper { max-width: 1400px; margin: auto; }
+        header { text-align: center; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 20px; }
+        h1 { color: var(--accent-blue); margin: 0 0 10px 0; font-size: 2.2rem; }
+        .subtitle { font-style: italic; color: #94a3b8; font-size: 1.1rem; }
+        .grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+        @media(max-width: 1024px) { .grid-layout { grid-template-columns: 1fr; } }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); border: 1px solid var(--border); height: fit-content; }
+        h2 { font-size: 1.4rem; margin-top: 0; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+        label { display: block; margin: 15px 0 5px; font-weight: 600; font-size: 0.9rem; color: #cbd5e1; }
+        input, textarea { width: 100%; padding: 12px; background: #0b0f19; border: 1px solid var(--border); border-radius: 6px; color: white; box-sizing: border-box; font-size: 0.95rem; }
+        textarea { height: 100px; resize: vertical; }
+        button { background: var(--accent-blue); color: #0b0f19; border: none; padding: 14px 20px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top:[...]
+        button:hover { background: #7dd3fc; transform: translateY(-1px); }
+        .case-item { background: #0b0f19; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 4px solid var(--accent-blue); }
+        .case-header { display: flex; justify-content: space-between; font-weight: bold; color: var(--accent-blue); margin-bottom: 10px; }
+        .case-section { font-size: 0.85rem; margin-top: 8px; color: #cbd5e1; }
+        .section-title { font-weight: bold; display: block; margin-bottom: 2px; }
+        .status-box { padding: 15px; margin-top: 20px; border-radius: 6px; display: none; font-weight: bold; text-align: center; }
+        .refresh-btn { background: transparent; color: var(--accent-blue); border: 1px solid var(--accent-blue); padding: 8px 15px; font-size: 0.85rem; width: auto; margin: 0; }
+        .refresh-btn:hover { background: rgba(56, 189, 248, 0.1); }
+    </style>
 </head>
 <body>
-  <div class="wrapper">
-    <header>
-      <h1>⚖️ WillampteyMD Fair Judgment System</h1>
-      <p class="subtitle">"Quis custodiet ipsos custodes?" — Neutral Equilibrium for the Toxic Triad of AI Governance</p>
-    </header>
-
-    <div class="grid-layout">
-      <div class="card">
-        <h2>🛡️ Creator Defense Intake</h2>
-        <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px;">Establish your human idea baseline prior to any secondary generative processing or false detector claims.</p>
-        <form id="judgmentForm">
-          <label for="projectTitle">Project / Intellectual Asset Title</label>
-          <input type="text" id="projectTitle" placeholder="e.g., Toxic Triads Book Masterclass" required>
-
-          <label for="creatorName">Author / Original Creator Name</label>
-          <input type="text" id="creatorName" placeholder="Your Name or Pseudonym" required>
-
-          <label for="humanGenesis" style="color: var(--accent-green);">1. Human Genesis (The Original Spark/Outline)</label>
-          <textarea id="humanGenesis" placeholder="Describe the foundational concept or blueprint you structured BEFORE using any secondary tools..." required></textarea>
-
-          <label for="workerAI" style="color: #cbd5e1;">2. Worker AI Layer (Generative Enhancer)</label>
-          <textarea id="workerAI" placeholder="Paste structural details or text expanded via generative models..."></textarea>
-
-          <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
-          <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
-
-          <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
-        </form>
-        <div id="statusNotification" class="status-box"></div>
-      </div>
-
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:10px; margin-bottom:15px;">
-          <h2 style="border:none; margin:0; padding:0;">🔎 Live Expert Judge Review Panel</h2>
-          <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
+    <div class="wrapper">
+        <header>
+            <h1>⚖️ WillampteyMD Fair Judgment System</h1>
+            <p class="subtitle">"Quis custodiet ipsos custodes?" — Neutral Equilibrium for the Toxic Triad of AI Governance</p>
+        </header>
+        <div class="grid-layout">
+            <div class="card">
+                <h2>🛡️ Creator Defense Intake</h2>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px;">Establish your human idea baseline prior to any secondary generative processing or false detector claims.</p>
+                <form id="judgmentForm">
+                    <label for="projectTitle">Project / Intellectual Asset Title</label>
+                    <input type="text" id="projectTitle" placeholder="e.g., Toxic Triads Book Masterclass" required>
+                    <label for="creatorName">Author / Original Creator Name</label>
+                    <input type="text" id="creatorName" placeholder="Your Name or Pseudonym" required>
+                    <label for="humanGenesis" style="color: var(--accent-green);">1. Human Genesis (The Original Spark/Outline)</label>
+                    <textarea id="humanGenesis" placeholder="Describe the foundational concept or blueprint you structured BEFORE using any secondary tools..." required></textarea>
+                    <label for="workerAI" style="color: #cbd5e1;">2. Worker AI Layer (Generative Enhancer)</label>
+                    <textarea id="workerAI" placeholder="Paste structural details or text expanded via generative models..."></textarea>
+                    <label for="detectiveVerdict" style="color: var(--accent-red);">3. Detective AI Stance (The Paranoid Accuser)</label>
+                    <textarea id="detectiveVerdict" placeholder="Paste the detector percentages or false plagiarism classifications thrown against your work..."></textarea>
+                    <button type="submit" id="submitBtn">Certify and Protect Intent Layer</button>
+                </form>
+                <div id="statusNotification" class="status-box"></div>
+            </div>
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px;">
+                    <h2 style="border: none; margin: 0; padding: 0;">🔎 Live Expert Judge Review Panel</h2>
+                    <button id="refreshBtn" class="refresh-btn">🔄 Refresh Cases</button>
+                </div>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin-top: -5px; margin-bottom: 20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false po[...]
+                <div id="casesDisplayContainer">
+                    <p style="color: #64748b; text-align: center; font-style: italic; padding: 40px 0;">Synchronizing secure interface modules...</p>
+                </div>
+            </div>
         </div>
-        <p style="font-size:0.85rem; color:#94a3b8; margin-top:-5px; margin-bottom:20px;">Reviewing active systemic conflicts. Objective auditing filters out paranoid software false positives.</p>
-        <div id="casesDisplayContainer">
-          <p style="color:#64748b; text-align:center; font-style:italic; padding:40px 0;">Synchronizing secure interface modules...</p>
-        </div>
-      </div>
     </div>
-  </div>
+           <!-- ================================================================= -->
+    <!-- CACHE-BUSTER IMPORT MAP CONFIGURATION                             -->
+    <!-- ================================================================= -->
+    
+    <script type="module">
+        // Load Supabase ESM directly from a CDN that serves proper CORS headers.
+        // Change this import if you have a build process or a local copy of @supabase/supabase-js.
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-  <!-- reCAPTCHA v3 (replace RECAPTCHA_SITE_KEY with your site key if used) -->
-  <script src="https://www.google.com/recaptcha/api.js?render=RECAPTCHA_SITE_KEY" async defer></script>
+        // =============================================================
+        // ⚠️ EDIT CONFIGURATION BINDINGS HERE
+        // =============================================================
+        // For security, do NOT commit real anon keys to public repos. Replace these placeholders
+        // during deployment via environment variables or a server-side endpoint.
+        const ENDPOINT = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
+        const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
-  <script>
-    const CERTIFY_URL = '/api/certify';
-    const CASES_URL = '/api/cases';
+        const dbClient = createClient(ENDPOINT, ANON_KEY);
+        const form = document.getElementById('judgmentForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusBox = document.getElementById('statusNotification');
+        const casesDisplay = document.getElementById('casesDisplayContainer');
+        const refreshBtn = document.getElementById('refreshBtn');
 
-    const form = document.getElementById('judgmentForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusBox = document.getElementById('statusNotification');
-    const casesDisplay = document.getElementById('casesDisplayContainer');
-    const refreshBtn = document.getElementById('refreshBtn');
-
-    function showStatus(message, type='info'){
-      statusBox.style.display = 'block';
-      if(type==='ok'){ statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)'; statusBox.style.color = '#4ade80'; }
-      else if(type==='err'){ statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)'; statusBox.style.color = '#f87171'; }
-      else { statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)'; statusBox.style.color = '#38bdf8'; }
-      statusBox.innerHTML = message;
-    }
-
-    async function generateIntentHash(t, c, g) {
-      const d = `${t.trim()}:${c.trim()}:${g.trim()}:${new Date().toISOString().split('T')}`;
-      const b = new TextEncoder().encode(d);
-      const h = await crypto.subtle.digest('SHA-256', b);
-      return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
-    }
-
-    function sanitizeInput(s, maxLen=2000){ if(!s) return ''; return s.toString().slice(0, maxLen); }
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Certifying Intent Layer...';
-      showStatus('Computing original genesis hash values...');
-
-      const t = sanitizeInput(document.getElementById('projectTitle').value, 200);
-      const c = sanitizeInput(document.getElementById('creatorName').value, 100);
-      const g = sanitizeInput(document.getElementById('humanGenesis').value, 4000);
-      const w = sanitizeInput(document.getElementById('workerAI').value, 4000);
-      const dv = sanitizeInput(document.getElementById('detectiveVerdict').value, 1000);
-
-      try {
-        const hash = await generateIntentHash(t, c, g);
-
-        // If grecaptcha is available, get token; otherwise send without token and let server respond.
-        let token = null;
-        if (typeof grecaptcha !== 'undefined' && grecaptcha.execute){
-          try{ await grecaptcha.ready(); token = await grecaptcha.execute('RECAPTCHA_SITE_KEY', { action: 'submit' }); } catch(e){ token = null; }
+        async function generateIntentHash(t, c, g) {
+            const d = `${t.trim()}:${c.trim()}:${g.trim()}:${new Date().toISOString().split('T')}`;
+            const b = new TextEncoder().encode(d);
+            const h = await crypto.subtle.digest('SHA-256', b);
+            return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
         }
 
-        const body = { project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash };
-        if (token) body.captcha_token = token;
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Certifying Intent Layer...';
+            statusBox.style.display = 'block';
+            statusBox.style.backgroundColor = 'rgba(56, 189, 248, 0.1)';
+            statusBox.style.color = '#38bdf8';
+            statusBox.textContent = 'Computing original genesis hash values...';
+            const t = document.getElementById('projectTitle').value;
+            const c = document.getElementById('creatorName').value;
+            const g = document.getElementById('humanGenesis').value;
+            const w = document.getElementById('workerAI').value;
+            const dv = document.getElementById('detectiveVerdict').value;
+            try {
+                const hash = await generateIntentHash(t, c, g);
+                const { error } = await dbClient.from('fair_judgments').insert([{ project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, certified_at: new Date().toISOString() }]);
+                if (error) throw error;
+                statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
+                statusBox.style.color = '#4ade80';
+                statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${hash.substring(0, 32)}...</span>`;
+                form.reset();
+                fetchCertifiedCases();
+            } catch (err) {
+                console.error(err);
+                statusBox.style.backgroundColor = 'rgba(248, 113, 113, 0.1)';
+                statusBox.style.color = '#f87171';
+                statusBox.textContent = `Certification Failed: ${err.message || JSON.stringify(err)}`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Certify and Protect Intent Layer';
+            }
+        });
 
-        const res = await fetch(CERTIFY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-        if(!res.ok){ const err = await res.text(); throw new Error(err || 'Server error'); }
+        async function fetchCertifiedCases() {
+            if (!casesDisplay) return;
+            casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:20px 0;">Syncing...</p>';
+            try {
+                const { data: cases, error } = await dbClient.from('fair_judgments').select('*').order('certified_at', { ascending: false });
+                if (error) throw error;
+                if (!cases || cases.length === 0) {
+                    casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:40px 0;">No certified intent profiles found.</p>';
+                    return;
+                }
+                casesDisplay.innerHTML = cases.map(i => `
+                    <div class="case-item">
+                        <div class="case-header"><span>📜 ${esc(i.project_title)}</span><span style="font-size:0.8rem; color:#94a3b8;">${new Date(i.certified_at).toLocaleDateString()}</span></div>
+                        <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${esc(i.creator_name)}</div>
+                        <div class="case-section"><span class="section-title" style="color:#4ade80;">1. Human Genesis Baseline:</span><div>${esc(i.human_genesis)}</div></div>
+                        ${i.worker_ai ? `<div class="case-section"><span class="section-title" style="color:#cbd5e1;">2. Generative Enhancements:</span><div>${esc(i.worker_ai)}</div></div>` : ''}
+                        ${i.detective_verdict ? `<div class="case-section"><span class="section-title" style="color:#f87171;">3. Algorithmic Accusation Stance:</span><div>${esc(i.detective_verdict)}</div></div>` : ''}
+                        <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">🔒 CERTIFICATE HASH: ${esc(i.intent_hash || '')}</div>
+                    </div>
+                `).join('');
+            } catch (err) {
+                casesDisplay.innerHTML = `<p style="color:#f87171; text-align:center; font-size:0.85rem;">Sync Error: ${err.message || JSON.stringify(err)}</p>`;
+            }
+        }
 
-        showStatus(`🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${hash.substring(0,32)}...</span>`, 'ok');
-        form.reset();
+        function esc(s) { return s ? s.replace(/[&<>'"]/g, t => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[t] || t)) : ''; }
+        if (refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
         fetchCertifiedCases();
-      } catch (err){ console.error(err); showStatus(`Certification Failed: ${err.message || JSON.stringify(err)}`, 'err'); }
-      finally{ submitBtn.disabled = false; submitBtn.textContent = 'Certify and Protect Intent Layer'; }
-    });
-
-    async function fetchCertifiedCases(){
-      if(!casesDisplay) return;
-      casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:20px 0;">Syncing...</p>';
-      try{
-        const res = await fetch(CASES_URL);
-        if(!res.ok) throw new Error('Failed to fetch cases');
-        const cases = await res.json();
-        if(!cases || cases.length===0){ casesDisplay.innerHTML = '<p style="color:#64748b; text-align:center; font-style:italic; padding:40px 0;">No certified intent profiles found.</p>'; return; }
-
-        casesDisplay.innerHTML = cases.map(i => `
-          <div class="case-item">
-            <div class="case-header"><span>📜 ${esc(i.project_title)}</span><span style="font-size:0.8rem; color:#94a3b8;">${new Date(i.certified_at).toLocaleDateString()}</span></div>
-            <div style="font-size:0.85rem; color:#64748b; margin-bottom:10px;">Author Node: ${esc(i.creator_name)}</div>
-            <div class="case-section"><span class="section-title" style="color:#4ade80;">1. Human Genesis Baseline:</span><div>${esc(i.human_genesis)}</div></div>
-            ${i.worker_ai ? `<div class="case-section"><span class="section-title" style="color:#cbd5e1;">2. Generative Enhancements:</span><div>${esc(i.worker_ai)}</div></div>` : ''}
-            ${i.detective_verdict ? `<div class="case-section"><span class="section-title" style="color:#f87171;">3. Algorithmic Accusation Stance:</span><div>${esc(i.detective_verdict)}</div></div>` : ''}
-            <div style="margin-top:12px; padding-top:8px; border-top:1px dashed #22314d; font-family:monospace; font-size:0.75rem; color:#38bdf8; word-break:break-all;">🔒 CERTIFICATE HASH: ${esc(i.intent_hash || '')}</div>
-          </div>
-        `).join('');
-      }catch(err){ casesDisplay.innerHTML = `<p style="color:#f87171; text-align:center; font-size:0.85rem;">Sync Error: ${err.message || JSON.stringify(err)}</p>`; }
-    }
-
-    function esc(s){ return s? s.replace(/[&<>"']/g, t => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;" }[t])): ''; }
-
-    if(refreshBtn) refreshBtn.addEventListener('click', fetchCertifiedCases);
-    fetchCertifiedCases();
-  </script>
+    </script>
 </body>
 </html>
