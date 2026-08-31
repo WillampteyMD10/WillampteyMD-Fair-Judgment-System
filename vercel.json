@@ -2,8 +2,18 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    {
+      "source": "/portal",
+      "destination": "/portal/page"
+    },
+    {
+      "source": "/portal/dashboard",
+      "destination": "/portal/dashboard/page"
+    },
+    {
+      "source": "/portal/ledger-review",
+      "destination": "/portal/ledger-review/page"
+    }
   ]
 }
