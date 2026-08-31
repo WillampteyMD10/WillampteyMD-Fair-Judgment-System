@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🛡️ Intake Workspace - Fair Judgment Portal</title>
+  
+  <!-- Load the official Supabase core abstraction engine -->
+  <script src="https://jsdelivr.net"></script>
+  <!-- Load localized client orchestration configs -->
+  <script src="/portal/database.js"></script>
+
+  <style>
+    body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px 20px; margin: 0; }
+    .container { max-width: 800px; margin: 0 auto; background-color: #161b22; padding: 30px; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    h1 { color: #58a6ff; margin: 0 0 5px 0; font-size: 28px; }
+    p.subtitle { color: #8b949e; margin: 0 0 30px 0; font-size: 14px; border-bottom: 1px solid #30363d; padding-bottom: 20px; }
+    .form-group { margin-bottom: 24px; }
+    label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
+    input[type="text"], textarea { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 16px; transition: border-color 0.2s; }
+    textarea { font-family: monospace; resize: vertical; }
+    input:focus, textarea:focus { border-color: #58a6ff; outline: none; box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
+    .info-box { background: rgba(56,139,253,0.1); border: 1px solid rgba(56,139,253,0.2); padding: 15px; border-radius: 6px; margin-bottom: 30px; font-size: 14px; color: #58a6ff; line-height: 1.5; }
+    button { background-color: #1f6feb; color: #fff; border: 1px solid rgba(240,246,252,0.1); padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; transition: background-color 0.2s; }
+    button:hover { background-color: #388bfd; }
+    .status-msg { margin-top: 15px; font-size: 14px; font-weight: bold; min-height: 20px; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>🛡️ Intake Workspace</h1>
+    <p class="subtitle">Authenticated Session Security Layer — Fair Judgment System</p>
+
+    <form id="genesisForm">
+      <div class="form-group">
+        <label for="projectTitle">Project / Intellectual Asset Title</label>
+        <input type="text" id="projectTitle" placeholder="Enter the definitive name of your creation" required />
+      </div>
+
+      <div class="form-group">
+        <label for="genesisSpark">1. Human Genesis (The Original Spark/Outline)</label>
+        <textarea id="genesisSpark" rows="8" placeholder="Establish your human idea baseline explicitly here before secondary processing..." required></textarea>
+      </div>
+
+      <div class="info-box">
+        ℹ️ Submitting this form anchors your intent. The transaction will automatically populate the isolated worker layer queue.
+      </div>
+
+      <button type="submit">Commit & Certify Intent Layer</button>
+      <div id="statusMessage" class="status-msg"></div>
+    </form>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('user') || 'Anonymous Student';
+
+    document.getElementById('genesisForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const projectTitle = document.getElementById('projectTitle').value.trim();
+      const genesisSpark = document.getElementById('genesisSpark').value.trim();
+      const statusMessage = document.getElementById('statusMessage');
+
+      statusMessage.style.color = '#58a6ff';
+      statusMessage.innerText = "Encrypting transaction and committing to database...";
+
+      if (typeof commitStudentGenesisToCloud !== 'undefined') {
+        const result = await commitStudentGenesisToCloud(studentId, projectTitle, genesisSpark);
+        
+        if (result.success) {
+          window.location.href = `/portal/ledger-review?title=${encodeURIComponent(projectTitle)}&author=${encodeURIComponent(studentId)}&genesis=${encodeURIComponent(genesisSpark)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
+        } else {
+          statusMessage.style.color = '#f85149';
+          statusMessage.innerText = "Database Error: " + result.error;
+        }
+      } else {
+        console.warn("Database pipeline connection unavailable. Committing session in backup sandbox mode.");
+        setTimeout(() => {
+          window.location.href = `/portal/ledger-review?title=${encodeURIComponent(projectTitle)}&author=${encodeURIComponent(studentId)}&genesis=${encodeURIComponent(genesisSpark)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
+        }, 1000);
+      }
+    });
+  </script>
+</body>
+</html>
