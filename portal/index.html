@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⚖ WillampteyMD Portal - Secure Authorization</title>
+  <!-- Load the official Supabase core engine for login verification -->
+  <script src="https://jsdelivr.net"></script>
   <style>
-    body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 20px; box-sizing: border-box; margin: 0; }
+    body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: -apple-system, sans-serif; padding: 20px; box-sizing: border-box; margin: 0; }
     .card { background-color: #161b22; padding: 40px; border-radius: 8px; border: 1px solid #30363d; width: 100%; max-width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); margin: auto; }
     h2 { color: #58a6ff; text-align: center; margin: 0 0 10px 0; font-size: 24px; }
     p.tag { color: #8b949e; text-align: center; font-size: 14px; margin: 0 0 30px 0; }
     .group { margin-bottom: 20px; }
-    label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
-    input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 16px; transition: border-color 0.2s; }
-    input:focus { border-color: #58a6ff; outline: none; box-shadow: 0 0 0 3px rgba(88,166,255,0.15); }
-    button { width: 100%; padding: 12px; background: #238636; border: 1px solid rgba(240,246,252,0.1); border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    label { display: block; margin-bottom: 8px; font-size: 14px; }
+    input { width: 100%; padding: 12px; background: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 16px; }
+    input:focus { border-color: #58a6ff; outline: none; }
+    button { width: 100%; padding: 12px; background: #238636; border: none; border-radius: 6px; color: #fff; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; }
     button:hover { background: #2ea043; }
-    .error { color: #f85149; background: rgba(248,81,73,0.1); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 20px; border: 1px solid rgba(248,81,73,0.2); text-align: center; font-weight: 500; }
+    .error { color: #f85149; background: rgba(248,81,73,0.1); padding: 12px; border-radius: 6px; font-size: 14px; margin-bottom: 20px; border: 1px solid rgba(248,81,73,0.2); text-align: center; }
   </style>
 </head>
 <body>
@@ -25,28 +27,53 @@
     <div id="errorBox" class="error" style="display: none;"></div>
     <form id="loginForm">
       <div class="group">
-        <label for="studentId">Student Authorization ID</label>
+        <label>Student Authorization ID</label>
         <input type="text" id="studentId" placeholder="e.g., WMD-2026-XYZ" required />
       </div>
       <div class="group">
-        <label for="passcode">Secure Access Passcode</label>
+        <label>Secure Access Passcode</label>
         <input type="password" id="passcode" placeholder="••••••••" required />
       </div>
-      <button type="submit">Authenticate Session</button>
+      <button type="submit" id="authBtn">Authenticate Session</button>
     </form>
   </div>
   <script>
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    // Hardcoded credentials backup/fallback layer mapping directly onto your Vercel keys
+    const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       const studentId = document.getElementById('studentId').value.trim();
       const passcode = document.getElementById('passcode').value.trim();
       const errorBox = document.getElementById('errorBox');
+      const authBtn = document.getElementById('authBtn');
       
-      if (studentId && passcode) {
-        window.location.href = '/portal/dashboard?user=' + encodeURIComponent(studentId);
-      } else {
+      errorBox.style.display = 'none';
+      authBtn.innerText = "Querying Database Layers...";
+      authBtn.style.background = "#1f6feb";
+
+      try {
+        // Query the secure table for a matching Student ID and passcode entry
+        const { data, error } = await supabaseClient
+          .from('student_credentials')
+          .select('student_id, secure_passcode')
+          .eq('student_id', studentId)
+          .eq('secure_passcode', passcode)
+          .single();
+
+        if (error || !data) {
+          throw new Error("Invalid institutional credentials or unauthorized access parameters.");
+        }
+
+        // Grant entry and pass the verified identity string
+        window.location.href = '/portal/dashboard?user=' + encodeURIComponent(data.student_id);
+      } catch (err) {
+        authBtn.innerText = "Authenticate Session";
+        authBtn.style.background = "#238636";
         errorBox.style.display = 'block';
-        errorBox.innerText = 'Please enter valid institutional credentials.';
+        errorBox.innerText = err.message;
       }
     });
   </script>
