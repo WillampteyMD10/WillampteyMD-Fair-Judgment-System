@@ -1,8 +1,8 @@
 // portal/database.js
 // Crucial: Replace the placeholder strings below with your exact Supabase credentials locally,
 // or configure them as Environment Variables inside your Vercel Dashboard for absolute security.
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "YOUR_SUPABASE_URL_HERE";
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "YOUR_SUPABASE_ANON_KEY_HERE";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://cbqkkipipssgplwbuqrm.supabase.co";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M";
 
 // Initialize the secure Supabase client framework
 let supabaseClient = null;
