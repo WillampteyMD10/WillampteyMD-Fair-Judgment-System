@@ -5,15 +5,15 @@
   "rewrites": [
     {
       "source": "/portal",
-      "destination": "/portal/page"
+      "destination": "/portal/page.js"
     },
     {
       "source": "/portal/dashboard",
-      "destination": "/portal/dashboard/page"
+      "destination": "/portal/dashboard/page.js"
     },
     {
       "source": "/portal/ledger-review",
-      "destination": "/portal/ledger-review/page"
+      "destination": "/portal/ledger-review/page.js"
     }
   ]
 }
