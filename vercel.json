@@ -1,5 +1,32 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "portal/**/*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/portal",
+      "dest": "/portal/index.html"
+    },
+    {
+      "src": "/portal/dashboard",
+      "dest": "/portal/dashboard.html"
+    },
+    {
+      "src": "/portal/ledger-review",
+      "dest": "/portal/ledger-review.html"
+    },
+    {
+      "handle": "filesystem"
+    }
+  ]
 }
