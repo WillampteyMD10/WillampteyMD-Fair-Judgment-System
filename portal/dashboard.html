@@ -53,33 +53,26 @@
       <div id="statusMessage" class="status-msg"></div>
     </form>
   </div>
-
-    <script>
+  <script>
     const urlParams = new URLSearchParams(window.location.search);
     const studentId = urlParams.get('user') || 'Anonymous Student';
 
     document.getElementById('genesisForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
-      // 🔍 Fixed element matching loops
       const projectTitleField = document.getElementById('projectTitle');
-      const genesisSparkField = document.getElementById('genesisSpark') || document.getElementById('genesisSparkText');
+      // 🔍 CATCHES ALL NAMES: Tries both genesisSpark and genesisSparkText to find your text box
+      const genesisSparkField = document.getElementById('genesisSpark') || document.getElementById('genesisSparkText') || document.getElementById('genesis_baseline');
       const statusMessage = document.getElementById('statusMessage');
 
-      if (!projectTitleField || !genesisSparkField) {
-        statusMessage.style.color = '#ffaa00';
-        statusMessage.innerText = "Layout Error: Form fields missing in view configuration.";
-        return;
-      }
-
-      const projectTitle = projectTitleField.value.trim();
-      const genesisSpark = genesisSparkField.value.trim();
+      const projectTitle = projectTitleField ? projectTitleField.value.trim() : '';
+      const genesisSpark = genesisSparkField ? genesisSparkField.value.trim() : '';
 
       statusMessage.style.color = '#58a6ff';
       statusMessage.innerText = "Encrypting transaction and committing to database...";
 
-      // Connect explicitly to the globalized window layer we exposed in database.js
-      const dbFunction = window.commitStudentGenesisToCloud || (typeof commitStudentGenesisToCloud !== 'undefined' ? commitStudentGenesisToCloud : null);
+      // Triggers the global database function we exposed in database.js
+      const dbFunction = window.commitStudentGenesisToCloud;
 
       if (dbFunction) {
         const result = await dbFunction(studentId, projectTitle, genesisSpark);
@@ -96,6 +89,7 @@
       }
     });
   </script>
+
 
 </body>
 </html>
