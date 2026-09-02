@@ -2,31 +2,18 @@
   "version": 2,
   "cleanUrls": true,
   "trailingSlash": false,
-  "builds": [
+  "rewrites": [
     {
-      "src": "index.html",
-      "use": "@vercel/static"
+      "source": "/portal",
+      "destination": "/portal/index.html"
     },
     {
-      "src": "portal/**/*.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/portal",
-      "dest": "/portal/index.html"
+      "source": "/portal/dashboard",
+      "destination": "/portal/dashboard.html"
     },
     {
-      "src": "/portal/dashboard",
-      "dest": "/portal/dashboard.html"
-    },
-    {
-      "src": "/portal/ledger-review",
-      "dest": "/portal/ledger-review.html"
-    },
-    {
-      "handle": "filesystem"
+      "source": "/portal/ledger-review",
+      "destination": "/portal/ledger-review.html"
     }
   ]
 }
