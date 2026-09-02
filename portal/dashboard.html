@@ -7,8 +7,8 @@
   
   <!-- Load the official Supabase core abstraction engine -->
  <script src="https://unpkg.com"></script>
-  <!-- Load localized client orchestration configs -->
-  <script src="/portal/database.js" crossorigin="anonymous"></script>
+ <!-- 1. Force Chrome to unblock the database layer by declaring it as a Module -->
+<script src="/portal/database.js" type="module" crossorigin="anonymous"></script>
 
   <style>
     body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px 20px; margin: 0; }
