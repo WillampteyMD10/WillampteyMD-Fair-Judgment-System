@@ -52,7 +52,7 @@
     </form>
   </div>
 
-  <script>
+    <script>
     const urlParams = new URLSearchParams(window.location.search);
     const studentId = urlParams.get('user') || 'Anonymous Student';
 
@@ -66,8 +66,11 @@
       statusMessage.style.color = '#58a6ff';
       statusMessage.innerText = "Encrypting transaction and committing to database...";
 
-      if (typeof commitStudentGenesisToCloud !== 'undefined') {
-        const result = await commitStudentGenesisToCloud(studentId, projectTitle, genesisSpark);
+      // Connect explicitly to the globalized window layer we exposed in database.js
+      const dbFunction = window.commitStudentGenesisToCloud || (typeof commitStudentGenesisToCloud !== 'undefined' ? commitStudentGenesisToCloud : null);
+
+      if (dbFunction) {
+        const result = await dbFunction(studentId, projectTitle, genesisSpark);
         
         if (result.success) {
           window.location.href = `/portal/ledger-review?title=${encodeURIComponent(projectTitle)}&author=${encodeURIComponent(studentId)}&genesis=${encodeURIComponent(genesisSpark)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
@@ -76,10 +79,8 @@
           statusMessage.innerText = "Database Error: " + result.error;
         }
       } else {
-        console.warn("Database pipeline connection unavailable. Committing session in backup sandbox mode.");
-        setTimeout(() => {
-          window.location.href = `/portal/ledger-review?title=${encodeURIComponent(projectTitle)}&author=${encodeURIComponent(studentId)}&genesis=${encodeURIComponent(genesisSpark)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
-        }, 1000);
+        statusMessage.style.color = '#ffaa00';
+        statusMessage.innerText = "Connecting secure ledger tunnel... please click again in a second.";
       }
     });
   </script>
