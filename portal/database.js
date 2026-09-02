@@ -1,14 +1,13 @@
 // portal/database.js
 const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; // Make sure your real key is pasted here!
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; // Keep your actual long key here!
 
 let supabaseClient = null;
 
-// Asynchronous gateway that waits for the network to deliver the Supabase library
-function getSupabaseClient() {
+// ADDED EXPORT HERE so the dashboard page can access this function
+export function getSupabaseClient() {
   if (supabaseClient) return supabaseClient;
 
-  // Checks both window scope and global scope for the loaded bundle
   const supabaseInstance = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
 
   if (supabaseInstance && supabaseInstance.createClient) {
@@ -21,9 +20,9 @@ function getSupabaseClient() {
 
 /**
  * Encapsulates the network payload pipeline pushing student inputs to the database
+ * ADDED EXPORT HERE to make sure the form submission runs perfectly
  */
-async function commitStudentGenesisToCloud(studentId, projectTitle, genesisSparkText) {
-  // Dynamically pull the active client connection right when the button is clicked
+export async function commitStudentGenesisToCloud(studentId, projectTitle, genesisSparkText) {
   const activeClient = getSupabaseClient();
   
   if (!activeClient) {
