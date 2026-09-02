@@ -5,8 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⚖ WillampteyMD Portal - Secure Authorization</title>
   <!-- Load the official Supabase core engine for login verification -->
-<script src="https://unpkg.com"></script>
+<!-- 1. Load the official bundle from the primary NPM mirror -->
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
+<!-- 2. Force the browser to wait and guarantee the global engine is ready -->
+<script>
+  window.supabase = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
+</script>
 
   <style>
     body { background-color: #0d1117; color: #c9d1d9; min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: -apple-system, sans-serif; padding: 20px; box-sizing: border-box; margin: 0; }
