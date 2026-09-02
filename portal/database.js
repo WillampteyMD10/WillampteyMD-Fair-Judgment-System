@@ -49,3 +49,5 @@ async function commitStudentGenesisToCloud(studentId, projectTitle, genesisSpark
     return { success: false, error: error.message };
   }
 }
+// Expose the function to the global window object so your HTML buttons can trigger it cleanly
+window.commitStudentGenesisToCloud = commitStudentGenesisToCloud;
