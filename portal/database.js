@@ -1,37 +1,44 @@
 // portal/database.js
 const SUPABASE_URL = "https://cbqkkipipssgplwbuqrm.supabase.co"; 
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; // Make sure your real key is pasted here!
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNicWtraXBpcHNzZ3Bsd2J1cXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwOTA3NjEsImV4cCI6MjEwMTY2Njc2MX0.b4coHxXwK9L8XIq6moXH4GNcSb2uk6eeKE7hPO2Ra-M"; 
 
 let supabaseClient = null;
 
-// Asynchronous gateway that waits for the network to deliver the Supabase library
-function getSupabaseClient() {
+// Self-initializing connection loop that attaches directly to the global window environment
+function initializeDatabase() {
   if (supabaseClient) return supabaseClient;
 
-  // Checks both window scope and global scope for the loaded bundle
+  // Search through all possible browser layers for the Supabase bundle
   const supabaseInstance = window.supabase || (typeof supabase !== 'undefined' ? supabase : null);
 
   if (supabaseInstance && supabaseInstance.createClient) {
-    supabaseClient = supabaseInstance.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return supabaseClient;
+    try {
+      supabaseClient = supabaseInstance.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      console.log("Supabase core layer established successfully.");
+      return supabaseClient;
+    } catch (err) {
+      console.error("Failed to construct client instance:", err.message);
+    }
   }
-  
   return null;
 }
 
+// Automatically execute on load to populate the window immediately
+initializeDatabase();
+
 /**
- * Encapsulates the network payload pipeline pushing student inputs to the database
+ * Global submission entry point that bypasses framework import limitations
  */
-async function commitStudentGenesisToCloud(studentId, projectTitle, genesisSparkText) {
-  // Dynamically pull the active client connection right when the button is clicked
-  const activeClient = getSupabaseClient();
+window.commitStudentGenesisToCloud = async function(studentId, projectTitle, genesisSparkText) {
+  // Ensure the client instance is awake and connected right when the button is pressed
+  const client = initializeDatabase();
   
-  if (!activeClient) {
+  if (!client) {
     return { success: false, error: "Database engine cluster offline. Retrying connection..." };
   }
 
   try {
-    const { data, error } = await activeClient
+    const { data, error } = await client
       .from('student_genesis_ledger')
       .insert([
         { 
@@ -48,6 +55,4 @@ async function commitStudentGenesisToCloud(studentId, projectTitle, genesisSpark
     console.error("Database connection transactional failure:", error.message);
     return { success: false, error: error.message };
   }
-}
-// Expose the function to the global window object so your HTML buttons can trigger it cleanly
-window.commitStudentGenesisToCloud = commitStudentGenesisToCloud;
+};
