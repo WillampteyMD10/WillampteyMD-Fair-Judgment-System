@@ -1,7 +1,9 @@
 // pages/portal/index.js
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { supabase } from '../../supabase';
+// CHANGE TO:
+import { supabase } from '../supabase';
+
 
 export default function PortalLogin() {
   const [studentId, setStudentId] = useState('');
