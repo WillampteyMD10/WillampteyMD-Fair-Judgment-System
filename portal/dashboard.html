@@ -5,18 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🛡️ Intake Workspace - Fair Judgment Portal</title>
   
- <!-- 1. First, load the core Supabase script library from the official mirror -->
-<script src="https://unpkg.com"></script>
+  <!-- 1. First, load the core Supabase script library from the official mirror -->
+  <script src="https://unpkg.com"></script>
 
-<!-- 2. Second, load your local database configuration settings -->
-<script src="/portal/database.js"></script>
-
+  <!-- 2. Second, load your local database configuration settings -->
+  <script src="/portal/database.js"></script>
 
   <style>
     body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px 20px; margin: 0; }
     .container { max-width: 800px; margin: 0 auto; background-color: #161b22; padding: 30px; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
     h1 { color: #58a6ff; margin: 0 0 5px 0; font-size: 28px; }
-    p.subtitle { color: #8b949e; margin: 0 0 30px 0; font-size: 14px; border-bottom: 1px solid #30363d; padding-bottom: 20px; }
+    p.subtitle { color: #8b949e; margin: 0 0 20px 0; font-size: 14px; border-bottom: 1px solid #30363d; padding-bottom: 20px; }
+    .operator-badge { background: rgba(56,139,253,0.05); border: 1px solid #30363d; padding: 12px 16px; border-radius: 6px; margin-bottom: 30px; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+    .operator-label { color: #8b949e; }
+    .operator-value { color: #58a6ff; font-weight: bold; }
     .form-group { margin-bottom: 24px; }
     label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
     input[type="text"], textarea { width: 100%; padding: 12px; background-color: #0d1117; border: 1px solid #30363d; border-radius: 6px; color: #fff; box-sizing: border-box; font-size: 16px; transition: border-color 0.2s; }
@@ -33,6 +35,12 @@
   <div class="container">
     <h1>🛡️ Intake Workspace</h1>
     <p class="subtitle">Authenticated Session Security Layer — Fair Judgment System</p>
+
+    
+    <div class="operator-badge">
+      <span class="operator-label">👤 Authenticated Creator:</span>
+      <span id="displayStudentId" class="operator-value">Loading...</span>
+    </div>
 
     <form id="genesisForm">
       <div class="form-group">
@@ -53,15 +61,18 @@
       <div id="statusMessage" class="status-msg"></div>
     </form>
   </div>
+
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const studentId = urlParams.get('user') || 'Anonymous Student';
+
+    // Instantly reflect the creator ID dynamically onto the workspace layout
+    document.getElementById('displayStudentId').innerText = studentId;
 
     document.getElementById('genesisForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const projectTitleField = document.getElementById('projectTitle');
-      // 🔍 CATCHES ALL NAMES: Tries both genesisSpark and genesisSparkText to find your text box
       const genesisSparkField = document.getElementById('genesisSpark') || document.getElementById('genesisSparkText') || document.getElementById('genesis_baseline');
       const statusMessage = document.getElementById('statusMessage');
 
@@ -71,7 +82,7 @@
       statusMessage.style.color = '#58a6ff';
       statusMessage.innerText = "Encrypting transaction and committing to database...";
 
-      // Triggers the global database function we exposed in database.js
+      // Triggers the global database function exposed in database.js
       const dbFunction = window.commitStudentGenesisToCloud;
 
       if (dbFunction) {
@@ -89,7 +100,6 @@
       }
     });
   </script>
-
 
 </body>
 </html>
