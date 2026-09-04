@@ -8,16 +8,48 @@ export default function PortalLogin() {
   const [error, setError] = useState('');
   const router = useRouter();
 
-  const handleLogin = (e) => {
+   // PASTE THIS EXACT REPLACEMENT:
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Sandbox validation: Ready for secure API routing integration
-    if (studentId.trim() && password.trim()) {
-      // Temporarily routing to local session dashboard safely
-      router.push('/portal/dashboard?user=' + encodeURIComponent(studentId));
-    } else {
+    setError('');
+    
+    if (!studentId.trim() || !password.trim()) {
       setError('Please enter valid institutional credentials.');
+      return;
+    }
+
+    try {
+      const cleanStudentId = studentId.trim();
+      const cleanPasscode = password.trim();
+
+      // Connect to your live database safely
+      const { data, error: dbError } = await supabase
+        .from('student_credentials')
+        .select('student_id, secure_passcode')
+        .ilike('student_id', cleanStudentId) // Matches ID even if capital letters don't match
+        .eq('secure_passcode', cleanPasscode)  
+        .maybeSingle(); // Returns null safely instead of throwing a 406 error
+
+      if (dbError) {
+        console.error("Database error:", dbError.message);
+        setError("System error connecting to authorization server.");
+        return;
+      }
+
+      if (!data) {
+        setError("Invalid Student Authorization ID or Passcode.");
+        return;
+      }
+
+      // Proceed to the dashboard with the verified ID
+      router.push('/portal/dashboard?user=' + encodeURIComponent(data.student_id));
+
+    } catch (err) {
+      console.error("Unexpected error:", err);
+      setError("An unexpected error occurred. Please try again.");
     }
   };
+
 
   return (
     <div style={{ backgroundColor: '#0d1117', color: '#c9d1d9', minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', fontFamily: 'sans-serif' }}>
