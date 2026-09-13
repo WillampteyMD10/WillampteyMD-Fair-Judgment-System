@@ -63,18 +63,27 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
       authBtn.innerText = "Querying Database Layers...";
       authBtn.style.background = "#1f6feb";
 
-      try {
-        // Query the secure table for a matching Student ID and passcode entry
+       try {
+        // Query using a clean array limit to bypass single/maybeSingle entirely
         const { data, error } = await supabaseClient
           .from('student_credentials')
           .select('student_id, secure_passcode')
           .eq('student_id', studentId)
           .eq('secure_passcode', passcode)
-          .single();
+          .limit(1); // <--- Pulls a safe array (max 1 item). Never throws a 406!
 
-        if (error || !data) {
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        // data comes back as an array. If empty, credentials are wrong.
+        if (!data || data.length === 0) {
           throw new Error("Invalid institutional credentials or unauthorized access parameters.");
         }
+
+        // Extract the user data safely from the array
+        const user = data[0]; 
+
 
         // Grant entry and pass the verified identity string
         window.location.href = '/portal/dashboard?user=' + encodeURIComponent(data.student_id);
