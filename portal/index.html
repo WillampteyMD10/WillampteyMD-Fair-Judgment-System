@@ -70,11 +70,13 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           .select('student_id, secure_passcode')
           .eq('student_id', studentId)
           .eq('secure_passcode', passcode)
-          .single();
+          .maybeSingle(); // <--- ✅ CHANGED THIS from .single() to .maybeSingle()
 
+        // If there's a database error, or if NO data was returned (invalid credentials)
         if (error || !data) {
           throw new Error("Invalid institutional credentials or unauthorized access parameters.");
         }
+
 
         // Grant entry and pass the verified identity string
         window.location.href = '/portal/dashboard?user=' + encodeURIComponent(data.student_id);
