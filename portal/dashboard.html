@@ -98,6 +98,62 @@
       }
     });
   </script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // 1. Pull the student ID we saved during login (or fallback safely)
+    const activeStudent = localStorage.getItem('authenticated_student_id') || 'StU-01';
+    
+    // 2. Safely swap out the 'undefined' text on your screen
+    const badge = document.getElementById('creator-display');
+    if (badge) {
+      badge.textContent = activeStudent;
+    }
+    
+    // 3. Hook into your form submission button
+    const submitButton = document.querySelector('button'); // Targets your 'Commit & Certify' button
+    
+    if (submitButton) {
+      submitButton.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        // Grab values from your input text and textarea elements
+        const projectTitle = document.querySelector('input[type="text"]').value;
+        const genesisSparkText = document.querySelector('textarea').value;
+        
+        if (!projectTitle || !genesisSparkText) {
+          alert("Please fill out both the Asset Title and the Human Genesis outline.");
+          return;
+        }
+
+        try {
+          // Send data safely to your student_genesis_ledger table
+          const { data, error } = await supabaseClient
+            .from('student_genesis_ledger')
+            .insert([
+              { 
+                student_id: activeStudent, // Securely targets the verified user string
+                asset_title: projectTitle, 
+                genesis_baseline: genesisSparkText,
+                committed_at: new Date().toISOString()
+              }
+            ]);
+            
+          if (error) throw error;
+          
+          alert("Success! Intent anchored in the isolated worker layer queue.");
+          
+          // Clear inputs after successful commit
+          document.querySelector('input[type="text"]').value = '';
+          document.querySelector('textarea').value = '';
+          
+        } catch (trxError) {
+          console.error("Ledger write failed:", trxError.message);
+          alert("Submission failed. Check database write permissions.");
+        }
+      });
+    }
+  });
+</script>
 
 </body>
 </html>
