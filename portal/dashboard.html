@@ -166,13 +166,15 @@
             document.getElementById('asset-title').value = '';
             document.getElementById('genesis-spark').value = '';
             
-          } catch (trxError) {
-            console.error("Ledger storage failure:", trxError.message);
-            if (statusDisplay) {
-              statusDisplay.textContent = `Error: ${trxError.message}`;
-              statusDisplay.style.color = "#f85149";
-            }
-          }
+        //  TO THIS NEW DEBUGGING BLOCK:
+} catch (trxError) {
+  console.error("Ledger storage failure:", trxError);
+  if (statusDisplay) {
+    // This forces the portal UI to print the real exact structural breakdown
+    statusDisplay.textContent = `Real System Error: ${trxError.message || JSON.stringify(trxError)}`;
+    statusDisplay.style.color = "#f85149";
+  }
+}
         });
       }
     });
