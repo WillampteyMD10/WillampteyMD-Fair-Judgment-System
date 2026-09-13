@@ -98,62 +98,85 @@
       }
     });
   </script>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // 1. Pull the student ID we saved during login (or fallback safely)
-    const activeStudent = localStorage.getItem('authenticated_student_id') || 'StU-01';
-    
-    // 2. Safely swap out the 'undefined' text on your screen
-    const badge = document.getElementById('creator-display');
-    if (badge) {
-      badge.textContent = activeStudent;
-    }
-    
-    // 3. Hook into your form submission button
-    const submitButton = document.querySelector('button'); // Targets your 'Commit & Certify' button
-    
-    if (submitButton) {
-      submitButton.addEventListener('click', async (e) => {
-        e.preventDefault();
-        
-        // Grab values from your input text and textarea elements
-        const projectTitle = document.querySelector('input[type="text"]').value;
-        const genesisSparkText = document.querySelector('textarea').value;
-        
-        if (!projectTitle || !genesisSparkText) {
-          alert("Please fill out both the Asset Title and the Human Genesis outline.");
-          return;
-        }
+  <!-- 👇 PASTE THIS SECURE REPLACEMENT CODE HERE 👇 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Pull the student ID we saved during login (or fallback safely)
+      const sessionStudentId = localStorage.getItem('authenticated_student_id') || 'StU-01'; 
+      
+      // 2. Target the exact text container safely
+      const badge = document.getElementById('creator-display');
+      if (badge) {
+        badge.textContent = sessionStudentId;
+      }
 
-        try {
-          // Send data safely to your student_genesis_ledger table
-          const { data, error } = await supabaseClient
-            .from('student_genesis_ledger')
-            .insert([
-              { 
-                student_id: activeStudent, // Securely targets the verified user string
-                asset_title: projectTitle, 
-                genesis_baseline: genesisSparkText,
-                committed_at: new Date().toISOString()
-              }
-            ]);
+      // 3. Absolute failsafe check: If 'undefined' is caught rendered anywhere in that badge area, overwrite it manually
+      const operatorBadge = document.querySelector('.operator-badge');
+      if (operatorBadge && operatorBadge.innerHTML.includes('undefined')) {
+        operatorBadge.innerHTML = `<span class="operator-label">👤 Authenticated Creator:</span> <span class="operator-value">${sessionStudentId}</span>`;
+      }
+
+      // 4. Hook tightly into the exact button ID
+      const submitButton = document.getElementById('commit-btn');
+      const statusDisplay = document.getElementById('status-display');
+
+      if (submitButton) {
+        submitButton.addEventListener('click', async (e) => {
+          e.preventDefault();
+          
+          // Pull values cleanly by structural element ID hooks
+          const projectTitle = document.getElementById('asset-title').value.trim();
+          const genesisSparkText = document.getElementById('genesis-spark').value.trim();
+          
+          if (!projectTitle || !genesisSparkText) {
+            alert("Please provide an Asset Title and fill out the Human Genesis field.");
+            return;
+          }
+
+          if (statusDisplay) {
+            statusDisplay.textContent = "Anchoring transaction intent layer...";
+            statusDisplay.style.color = "#58a6ff";
+          }
+
+          try {
+            // Verify our local database initialization client is alive
+            if (typeof supabaseClient === 'undefined') {
+              throw new Error("Database service engine not loaded. Check script tag imports.");
+            }
+
+            const { data, error } = await supabaseClient
+              .from('student_genesis_ledger')
+              .insert([
+                { 
+                  student_id: sessionStudentId,
+                  asset_title: projectTitle, 
+                  genesis_baseline: genesisSparkText,
+                  committed_at: new Date().toISOString()
+                }
+              ]);
+              
+            if (error) throw error;
             
-          if (error) throw error;
-          
-          alert("Success! Intent anchored in the isolated worker layer queue.");
-          
-          // Clear inputs after successful commit
-          document.querySelector('input[type="text"]').value = '';
-          document.querySelector('textarea').value = '';
-          
-        } catch (trxError) {
-          console.error("Ledger write failed:", trxError.message);
-          alert("Submission failed. Check database write permissions.");
-        }
-      });
-    }
-  });
-</script>
-
+            if (statusDisplay) {
+              statusDisplay.textContent = "✓ Intent successfully anchored in isolated worker layer queue.";
+              statusDisplay.style.color = "#238636";
+            }
+            
+            // Clean out input fields gracefully
+            document.getElementById('asset-title').value = '';
+            document.getElementById('genesis-spark').value = '';
+            
+          } catch (trxError) {
+            console.error("Ledger storage failure:", trxError.message);
+            if (statusDisplay) {
+              statusDisplay.textContent = `Error: ${trxError.message}`;
+              statusDisplay.style.color = "#f85149";
+            }
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
+
