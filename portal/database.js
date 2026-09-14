@@ -33,12 +33,17 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
   // Ensure the client instance is awake and connected right when the button is pressed
   const client = initializeDatabase();
   
-  if (!client) {
+   // 1. Call your function live to establish the client dynamic variable
+  const activeClient = initializeDatabase();
+
+  // 2. Update the check to use the freshly initialized connection
+  if (!activeClient) {
     return { success: false, error: "Database engine cluster offline. Retrying connection..." };
   }
 
   try {
-    const { data, error } = await client
+    // 3. Use activeClient to execute the transaction safely
+    const { data, error } = await activeClient
       .from('student_genesis_ledger')
       .insert([
         { 
