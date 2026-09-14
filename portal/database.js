@@ -61,3 +61,5 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
     return { success: false, error: error.message };
   }
 };
+// ✅ Add this line at the absolute bottom of database.js to bridge the naming gap
+window.saveGenesisLedger = window.commitStudentGenesisToCloud;
