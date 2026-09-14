@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🛡️ Intake Workspace - Fair Judgment Portal</title>
-  <!-- 1. First, load the core Supabase script library from the official mirror -->
-<script src="https://unpkg.com"></script>
-<!-- 2. Second, load your local database configuration settings -->
-<script src="./database.js"></script>
+  
+  <!-- 1. Loads the core Supabase client engine accurately -->
+  <script src="https://unpkg.com"></script>
+  
+  <!-- 2. Loads your local database connection module configuration -->
+  <script src="./database.js"></script>
 
   <style>
     body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px 20px; margin: 0; }
@@ -31,104 +33,55 @@
 <body>
 
   <div class="container">
-    <h1>🛡️ Intake Workspace</h1>
+    <h1>Intake Workspace</h1>
     <p class="subtitle">Authenticated Session Security Layer — Fair Judgment System</p>
 
-    
+    <!-- 👤 AUTHENTICATED CREATOR AREA -->
     <div class="operator-badge">
       <span class="operator-label">👤 Authenticated Creator:</span>
-      <span id="displayStudentId" class="operator-value">Loading...</span>
+      <span class="operator-value" id="creator-display">StU-01</span>
     </div>
 
-    <form id="genesisForm">
-      <div class="form-group">
-        <label for="projectTitle">Project / Intellectual Asset Title</label>
-        <input type="text" id="projectTitle" placeholder="Enter the definitive name of your creation" required />
-      </div>
+    <!-- PROJECT TITLE LAYER INPUT -->
+    <div class="form-group">
+      <label for="asset-title">Project / Intellectual Asset Title</label>
+      <input type="text" id="asset-title" placeholder="Enter the definitive name of your creation">
+    </div>
 
-      <div class="form-group">
-        <label for="genesisSpark">1. Human Genesis (The Original Spark/Outline)</label>
-        <textarea id="genesisSpark" rows="8" placeholder="Establish your human idea baseline explicitly here before secondary processing..." required></textarea>
-      </div>
+    <!-- HUMAN GENESIS WORKSPACE TEXTAREA -->
+    <div class="form-group">
+      <label for="genesis-spark">1. Human Genesis (The Original Spark/Outline)</label>
+      <textarea id="genesis-spark" rows="6" placeholder="Establish your human idea baseline explicitly here before secondary processing..."></textarea>
+    </div>
 
-      <div class="info-box">
-        ℹ️ Submitting this form anchors your intent. The transaction will automatically populate the isolated worker layer queue.
-      </div>
+    <div class="info-box">
+      ℹ️ Submitting this form anchors your intent. The transaction will automatically populate the isolated worker layer queue.
+    </div>
 
-      <button type="submit">Commit & Certify Intent Layer</button>
-      <div id="statusMessage" class="status-msg"></div>
-    </form>
+    <!-- CORE TRIGGER ACTION COMPONENT -->
+    <button id="commit-btn">Commit & Certify Intent Layer</button>
+    
+    <!-- TRANSACTION STATUS LOGGER ELEMENT -->
+    <div class="status-msg" id="status-display"></div>
   </div>
 
-  <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const studentId = urlParams.get('user') || 'Anonymous Student';
-
-    // Instantly reflect the creator ID dynamically onto the workspace layout
-    document.getElementById('displayStudentId').innerText = studentId;
-
-    document.getElementById('genesisForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const projectTitleField = document.getElementById('projectTitle');
-      const genesisSparkField = document.getElementById('genesisSpark') || document.getElementById('genesisSparkText') || document.getElementById('genesis_baseline');
-      const statusMessage = document.getElementById('statusMessage');
-
-      const projectTitle = projectTitleField ? projectTitleField.value.trim() : '';
-      const genesisSpark = genesisSparkField ? genesisSparkField.value.trim() : '';
-
-      statusMessage.style.color = '#58a6ff';
-      statusMessage.innerText = "Encrypting transaction and committing to database...";
-
-      // Triggers the global database function exposed in database.js
-      const dbFunction = window.commitStudentGenesisToCloud;
-
-      if (dbFunction) {
-        const result = await dbFunction(studentId, projectTitle, genesisSpark);
-        
-        if (result.success) {
-          window.location.href = `/portal/ledger-review?title=${encodeURIComponent(projectTitle)}&author=${encodeURIComponent(studentId)}&genesis=${encodeURIComponent(genesisSpark)}&timestamp=${encodeURIComponent(new Date().toISOString())}`;
-        } else {
-          statusMessage.style.color = '#f85149';
-          statusMessage.innerText = "Database Error: " + result.error;
-        }
-      } else {
-        statusMessage.style.color = '#ffaa00';
-        statusMessage.innerText = "Connecting secure ledger tunnel... please click again in a second.";
-      }
-    });
-    <!-- 👇 PASTE THIS SECURE REPLACEMENT CODE HERE 👇 -->
+  <!-- RUNTIME APPLICATION FRAMEWORK LOGIC -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Recover the secure session identifier string
+      // 1. Gather validated credential cache
       const sessionStudentId = localStorage.getItem('authenticated_student_id') || 'StU-01'; 
       
-      // 2. Instantly force update the creator display badge to stop the "Loading..." state
+      // 2. Explicitly bind display values to clear all loading artifacts
       const badge = document.getElementById('creator-display');
       if (badge) {
         badge.textContent = sessionStudentId;
       }
 
-      // Failsafe fallback: Overwrite the operator badge content directly if anything is stuck
-      const operatorBadge = document.querySelector('.operator-badge');
-      if (operatorBadge) {
-        operatorBadge.innerHTML = `<span class="operator-label">👤 Authenticated Creator:</span> <span class="operator-value" id="creator-display">${sessionStudentId}</span>`;
-      }
-
-      // 3. Resilient layout element querying (hooks into IDs or element types)
-      const submitButton = document.getElementById('commit-btn') || document.querySelector('button');
-      const titleInput = document.getElementById('asset-title') || document.querySelector('input[type="text"]');
-      const sparkInput = document.getElementById('genesis-spark') || document.querySelector('textarea');
-      
-      // Safely find or dynamically create a status rendering area below the button if missing
-      let statusDisplay = document.getElementById('status-display') || document.querySelector('.status-msg');
-      if (!statusDisplay && submitButton && submitButton.parentNode) {
-        statusDisplay = document.createElement('div');
-        statusDisplay.className = 'status-msg';
-        statusDisplay.id = 'status-display';
-        statusDisplay.style.marginTop = '15px';
-        submitButton.parentNode.insertBefore(statusDisplay, submitButton.nextSibling);
-      }
+      // 3. Map interface elements safely
+      const submitButton = document.getElementById('commit-btn');
+      const titleInput = document.getElementById('asset-title');
+      const sparkInput = document.getElementById('genesis-spark');
+      const statusDisplay = document.getElementById('status-display');
 
       if (submitButton) {
         submitButton.addEventListener('click', async (e) => {
@@ -148,7 +101,7 @@
           }
 
           try {
-            // 4. Locate your custom insertion logic globally inside database.js
+            // 4. Trace available global connection wrappers inside database.js
             const dbFunction = window.saveGenesisLedger || 
                                window.commitGenesisLedger || 
                                (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null) ||
@@ -158,7 +111,7 @@
               throw new Error("Transactional engine entry points not found in database.js context.");
             }
 
-            // Execute the database connector function natively
+            // 5. Fire operational commit request payload
             const result = await dbFunction(sessionStudentId, projectTitle, genesisSparkText);
 
             if (result && result.success) {
@@ -166,11 +119,9 @@
                 statusDisplay.textContent = "✓ Intent successfully anchored in isolated worker layer queue.";
                 statusDisplay.style.color = "#238636";
               }
-              // Wipe UI parameters clean on transactional validation
               if (titleInput) titleInput.value = '';
               if (sparkInput) sparkInput.value = '';
             } else {
-              // Extract the error string returned out of your database.js wrapper
               throw new Error(result ? result.error : "Unknown connection fault configuration parameter.");
             }
             
@@ -187,5 +138,3 @@
   </script>
 </body>
 </html>
-
-
