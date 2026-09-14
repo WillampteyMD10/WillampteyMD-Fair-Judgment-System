@@ -97,84 +97,82 @@
         statusMessage.innerText = "Connecting secure ledger tunnel... please click again in a second.";
       }
     });
-  </script>
-  <!-- 👇 PASTE THIS SECURE REPLACEMENT CODE HERE 👇 -->
+   <!-- 👇 PASTE THIS PERFECTLY FORMATTED REPLACEMENT CODE HERE 👇 -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Pull the student ID we saved during login (or fallback safely)
+      // 1. Recover the secure session identifier string
       const sessionStudentId = localStorage.getItem('authenticated_student_id') || 'StU-01'; 
       
-      // 2. Target the exact text container safely
+      // 2. Set the badge rendering layout value
       const badge = document.getElementById('creator-display');
       if (badge) {
         badge.textContent = sessionStudentId;
       }
 
-      // 3. Absolute failsafe check: If 'undefined' is caught rendered anywhere in that badge area, overwrite it manually
+      // 3. Absolute failsafe check for any rendered undefined text strings
       const operatorBadge = document.querySelector('.operator-badge');
       if (operatorBadge && operatorBadge.innerHTML.includes('undefined')) {
         operatorBadge.innerHTML = `<span class="operator-label">👤 Authenticated Creator:</span> <span class="operator-value">${sessionStudentId}</span>`;
       }
 
-      // 4. Hook tightly into the exact button ID
+      // 4. Bind to explicit layout nodes by their string IDs
       const submitButton = document.getElementById('commit-btn');
       const statusDisplay = document.getElementById('status-display');
+      const titleInput = document.getElementById('asset-title');
+      const sparkInput = document.getElementById('genesis-spark');
 
       if (submitButton) {
         submitButton.addEventListener('click', async (e) => {
           e.preventDefault();
           
-          // Pull values cleanly by structural element ID hooks
-          const projectTitle = document.getElementById('asset-title').value.trim();
-          const genesisSparkText = document.getElementById('genesis-spark').value.trim();
+          const projectTitle = titleInput ? titleInput.value.trim() : '';
+          const genesisSparkText = sparkInput ? sparkInput.value.trim() : '';
           
           if (!projectTitle || !genesisSparkText) {
-            alert("Please provide an Asset Title and fill out the Human Genesis field.");
+            alert("Please supply an Asset Title and enter your Human Genesis outline parameters.");
             return;
           }
 
           if (statusDisplay) {
-            statusDisplay.textContent = "Anchoring transaction intent layer...";
+            statusDisplay.textContent = "Processing ledger write transaction layer...";
             statusDisplay.style.color = "#58a6ff";
           }
 
           try {
-            // Verify our local database initialization client is alive
-            if (typeof supabaseClient === 'undefined') {
-              throw new Error("Database service engine not loaded. Check script tag imports.");
+            // 5. FIND AND EXECUTE THE WRAPPER FUNCTION EXPORTED BY YOUR DATABASE.JS
+            // This cleanly calls your database.js file instead of bypassing it
+            const dbFunction = window.saveGenesisLedger || 
+                               window.commitGenesisLedger || 
+                               (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null) ||
+                               (typeof commitGenesisLedger === 'function' ? commitGenesisLedger : null);
+
+            if (!dbFunction) {
+              throw new Error("Transactional engine entry points not found in database.js context.");
             }
 
-            const { data, error } = await supabaseClient
-              .from('student_genesis_ledger')
-              .insert([
-                { 
-                  student_id: sessionStudentId,
-                  asset_title: projectTitle, 
-                  genesis_baseline: genesisSparkText,
-                  committed_at: new Date().toISOString()
-                }
-              ]);
-              
-            if (error) throw error;
-            
-            if (statusDisplay) {
-              statusDisplay.textContent = "✓ Intent successfully anchored in isolated worker layer queue.";
-              statusDisplay.style.color = "#238636";
+            // Execute the database connector function natively
+            const result = await dbFunction(sessionStudentId, projectTitle, genesisSparkText);
+
+            if (result && result.success) {
+              if (statusDisplay) {
+                statusDisplay.textContent = "✓ Intent successfully anchored in isolated worker layer queue.";
+                statusDisplay.style.color = "#238636";
+              }
+              // Wipe UI parameters clean on transactional validation
+              if (titleInput) titleInput.value = '';
+              if (sparkInput) sparkInput.value = '';
+            } else {
+              // Extract the error string returned out of your database.js wrapper
+              throw new Error(result ? result.error : "Unknown connection fault configuration parameter.");
             }
             
-            // Clean out input fields gracefully
-            document.getElementById('asset-title').value = '';
-            document.getElementById('genesis-spark').value = '';
-            
-        //  TO THIS NEW DEBUGGING BLOCK:
-} catch (trxError) {
-  console.error("Ledger storage failure:", trxError);
-  if (statusDisplay) {
-    // This forces the portal UI to print the real exact structural breakdown
-    statusDisplay.textContent = `Real System Error: ${trxError.message || JSON.stringify(trxError)}`;
-    statusDisplay.style.color = "#f85149";
-  }
-}
+          } catch (err) {
+            console.error("Workspace submission runtime execution failure:", err.message);
+            if (statusDisplay) {
+              statusDisplay.textContent = `Error: ${err.message}`;
+              statusDisplay.style.color = "#f85149";
+            }
+          }
         });
       }
     });
