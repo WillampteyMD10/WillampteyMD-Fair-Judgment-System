@@ -97,29 +97,38 @@
         statusMessage.innerText = "Connecting secure ledger tunnel... please click again in a second.";
       }
     });
-   <!-- 👇 PASTE THIS PERFECTLY FORMATTED REPLACEMENT CODE HERE 👇 -->
+    <!-- 👇 PASTE THIS SECURE REPLACEMENT CODE HERE 👇 -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Recover the secure session identifier string
       const sessionStudentId = localStorage.getItem('authenticated_student_id') || 'StU-01'; 
       
-      // 2. Set the badge rendering layout value
+      // 2. Instantly force update the creator display badge to stop the "Loading..." state
       const badge = document.getElementById('creator-display');
       if (badge) {
         badge.textContent = sessionStudentId;
       }
 
-      // 3. Absolute failsafe check for any rendered undefined text strings
+      // Failsafe fallback: Overwrite the operator badge content directly if anything is stuck
       const operatorBadge = document.querySelector('.operator-badge');
-      if (operatorBadge && operatorBadge.innerHTML.includes('undefined')) {
-        operatorBadge.innerHTML = `<span class="operator-label">👤 Authenticated Creator:</span> <span class="operator-value">${sessionStudentId}</span>`;
+      if (operatorBadge) {
+        operatorBadge.innerHTML = `<span class="operator-label">👤 Authenticated Creator:</span> <span class="operator-value" id="creator-display">${sessionStudentId}</span>`;
       }
 
-      // 4. Bind to explicit layout nodes by their string IDs
-      const submitButton = document.getElementById('commit-btn');
-      const statusDisplay = document.getElementById('status-display');
-      const titleInput = document.getElementById('asset-title');
-      const sparkInput = document.getElementById('genesis-spark');
+      // 3. Resilient layout element querying (hooks into IDs or element types)
+      const submitButton = document.getElementById('commit-btn') || document.querySelector('button');
+      const titleInput = document.getElementById('asset-title') || document.querySelector('input[type="text"]');
+      const sparkInput = document.getElementById('genesis-spark') || document.querySelector('textarea');
+      
+      // Safely find or dynamically create a status rendering area below the button if missing
+      let statusDisplay = document.getElementById('status-display') || document.querySelector('.status-msg');
+      if (!statusDisplay && submitButton && submitButton.parentNode) {
+        statusDisplay = document.createElement('div');
+        statusDisplay.className = 'status-msg';
+        statusDisplay.id = 'status-display';
+        statusDisplay.style.marginTop = '15px';
+        submitButton.parentNode.insertBefore(statusDisplay, submitButton.nextSibling);
+      }
 
       if (submitButton) {
         submitButton.addEventListener('click', async (e) => {
@@ -139,8 +148,7 @@
           }
 
           try {
-            // 5. FIND AND EXECUTE THE WRAPPER FUNCTION EXPORTED BY YOUR DATABASE.JS
-            // This cleanly calls your database.js file instead of bypassing it
+            // 4. Locate your custom insertion logic globally inside database.js
             const dbFunction = window.saveGenesisLedger || 
                                window.commitGenesisLedger || 
                                (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null) ||
@@ -179,4 +187,5 @@
   </script>
 </body>
 </html>
+
 
