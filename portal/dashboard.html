@@ -100,25 +100,35 @@
             statusDisplay.style.color = "#58a6ff";
           }
 
-          try {
-            // CORB PROTECTION: Direct Supabase verification check
-            if (!window.supabase) {
-              throw new Error("Supabase client not initialized in window context.");
+                   try {
+            // 1. TIMING RECOVERY: Look for Supabase on the window object OR fallback to database.js variable
+            let clientInstance = window.supabase;
+            if (!clientInstance && typeof supabase !== 'undefined') {
+              clientInstance = supabase;
             }
 
-            // Fetch the authenticated user state directly from the system
-            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            // If it is completely missing during initial page mount, warn and wait gracefully
+            if (!clientInstance) {
+              if (statusDisplay) {
+                statusDisplay.textContent = "Connecting to Fair Judgment secure ledger... Please retry in 1 second.";
+                statusDisplay.style.color = "#ffb300"; // Informative warning orange
+              }
+              return; // Halts safely without causing a console error crash
+            }
+
+            // 2. Fetch the authenticated user state directly from your verified client instance
+            const { data: { user }, error: authError } = await clientInstance.auth.getUser();
 
             // Intercept and prevent empty or uninitialized payloads from hitting the network
             if (authError || !user) {
               if (statusDisplay) {
                 statusDisplay.textContent = "Error: Authenticating session... Please click again in 1 second.";
-                statusDisplay.style.color = "#ffb300"; // Friendly warning orange
+                statusDisplay.style.color = "#ffb300"; 
               }
-              return; // Exits early to block CORB issues entirely
+              return; 
             }
 
-            // 4. Trace available global connection wrappers inside database.js
+            // 3. Trace available global connection wrappers inside database.js
             const dbFunction = window.saveGenesisLedger || 
                                window.commitGenesisLedger || 
                                (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null) ||
@@ -128,7 +138,7 @@
               throw new Error("Transactional engine entry points not found in database.js context.");
             }
 
-            // 5. Fire operational commit request payload passing the true user token
+            // 4. Fire operational commit request payload passing the parameters
             const result = await dbFunction(projectTitle, genesisSparkText);
 
             if (result && result.success) {
@@ -164,5 +174,6 @@
   </script>
 </body>
 </html>
+
 
            
