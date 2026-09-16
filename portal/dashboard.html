@@ -125,12 +125,27 @@
               throw new Error(result ? result.error : "Unknown connection fault configuration parameter.");
             }
             
-          } catch (err) {
-            console.error("Workspace submission runtime execution failure:", err.message);
+             // ... your existing insertion code right above ...
+    
+    } catch (err) {
+        console.error("Workspace submission runtime execution failure:", err.message);
+        
+        // CHECK: If the error happened because the student isn't fully loaded yet
+        if (err.message.includes("undefined") || !window.supabase) {
             if (statusDisplay) {
-              statusDisplay.textContent = `Error: ${err.message}`;
-              statusDisplay.style.color = "#f85149";
+                statusDisplay.textContent = "Error: Authenticating session... Please click again in 1 second.";
+                statusDisplay.style.color = "#ffb300"; // Friendly warning orange
             }
+            return;
+        }
+
+        // Your exact untouched error display logic for true network issues
+        if (statusDisplay) {
+            statusDisplay.textContent = `Error: ${err.message}`;
+            statusDisplay.style.color = "#f85149"; // Your original error red
+        }
+    }
+
           }
         });
       }
