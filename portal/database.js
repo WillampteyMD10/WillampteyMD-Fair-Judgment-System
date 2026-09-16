@@ -42,15 +42,24 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
   }
 
   try {
-    // 3. Use activeClient to execute the transaction safely
+    // 🌟 CHANGE 1: CORB PREVENTION LAYER
+    // Dynamically fetch the real authenticated User UUID token straight from the active session
+    const { data: { user }, error: authError } = await activeClient.auth.getUser();
+
+    if (authError || !user) {
+        return { success: false, error: "Authentication session loading... Please try again in 1 second." };
+    }
+
+    // 🌟 CHANGE 2: MAP TO YOUR SECURE DASHBOARD TABLE
     const { data, error } = await activeClient
-      .from('student_genesis_ledger')
+      .from('intents') // Changed from 'student_genesis_ledger' to match your Supabase schema
       .insert([
         { 
-          student_id: studentId, 
-          asset_title: projectTitle, 
-          genesis_baseline: genesisSparkText,
-          committed_at: new Date().toISOString()
+          user_id: user.id,                // Passes the required secure account UUID token instead of plain text
+          creator_name: studentId,         // Stores your visual portal label ("StU-01") safely
+          project_title: projectTitle,     // Maps your form input
+          human_genesis: genesisSparkText, // Stores your Human Genesis baseline text
+          status: 'queued_for_worker_ai'
         }
       ]);
 
@@ -61,5 +70,7 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
     return { success: false, error: error.message };
   }
 };
-// ✅ Add this line at the absolute bottom of database.js to bridge the naming gap
+
+// ✅ KEEP THIS AS THE ABSOLUTE BOTTOM: Bridges the naming gap perfectly
 window.saveGenesisLedger = window.commitStudentGenesisToCloud;
+
