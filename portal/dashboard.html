@@ -65,7 +65,7 @@
     <div class="status-msg" id="status-display"></div>
   </div>
 
-  <!-- RUNTIME APPLICATION FRAMEWORK LOGIC -->
+   <!-- RUNTIME APPLICATION FRAMEWORK LOGIC -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Gather validated credential cache
@@ -101,6 +101,23 @@
           }
 
           try {
+            // CORB PROTECTION: Direct Supabase verification check
+            if (!window.supabase) {
+              throw new Error("Supabase client not initialized in window context.");
+            }
+
+            // Fetch the authenticated user state directly from the system
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+            // Intercept and prevent empty or uninitialized payloads from hitting the network
+            if (authError || !user) {
+              if (statusDisplay) {
+                statusDisplay.textContent = "Error: Authenticating session... Please click again in 1 second.";
+                statusDisplay.style.color = "#ffb300"; // Friendly warning orange
+              }
+              return; // Exits early to block CORB issues entirely
+            }
+
             // 4. Trace available global connection wrappers inside database.js
             const dbFunction = window.saveGenesisLedger || 
                                window.commitGenesisLedger || 
@@ -111,8 +128,8 @@
               throw new Error("Transactional engine entry points not found in database.js context.");
             }
 
-            // 5. Fire operational commit request payload
-            const result = await dbFunction(sessionStudentId, projectTitle, genesisSparkText);
+            // 5. Fire operational commit request payload passing the true user token
+            const result = await dbFunction(projectTitle, genesisSparkText);
 
             if (result && result.success) {
               if (statusDisplay) {
@@ -124,7 +141,7 @@
             } else {
               throw new Error(result ? result.error : "Unknown connection fault configuration parameter.");
             }
-                } catch (err) {
+          } catch (err) {
             console.error("Workspace submission runtime execution failure:", err.message);
             
             // CHECK: If the error happened because the student isn't fully loaded yet
@@ -140,14 +157,12 @@
                     statusDisplay.style.color = "#f85149"; // Your original error red
                 }
             }
-        } // This explicitly closes the catch block cleanly
-        
-    // --- Your original, untouched closing wrapper structure ---
+          } // This explicitly closes the catch block cleanly
         });
       }
     });
   </script>
 </body>
 </html>
-  
+
            
