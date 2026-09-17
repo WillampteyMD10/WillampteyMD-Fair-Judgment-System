@@ -72,7 +72,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           .eq('secure_passcode', passcode)
           .limit(1); // <--- Pulls a safe array (max 1 item). Never throws a 406!
 
-        if (error) {
+                      if (error) {
           throw new Error(error.message);
         }
 
@@ -82,11 +82,19 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
         // Extract the user data safely from the array
-        const user = data[0]; 
+        const user = data[0];
 
+        // 🌟 THE CRITICAL FIX: Explicitly cache the user profile ID so dashboard.html can read it!
+        if (user && user.id) {
+          localStorage.setItem('authenticated_student_id', user.student_id || 'StU-01');
+          localStorage.setItem('supabase_auth_user_uuid', user.id); // Bridges the database gap
+          
+          // Routes cleanly passing the true database UUID to clear the 'undefined' bug completely!
+          window.location.href = `./portal/dashboard.html?user=${user.id}`;
+        } else {
+          throw new Error("User record missing a valid system identifier node.");
+        }
 
-        // Grant entry and pass the verified identity string
-        window.location.href = '/portal/dashboard?user=' + encodeURIComponent(data.student_id);
       } catch (err) {
         authBtn.innerText = "Authenticate Session";
         authBtn.style.background = "#238636";
@@ -97,3 +105,4 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   </script>
 </body>
 </html>
+
