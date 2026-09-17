@@ -25,7 +25,6 @@ function initializeDatabase() {
 
 // Automatically execute on load to populate the window immediately
 initializeDatabase();
-
 /**
  * Global submission entry point that bypasses framework import limitations
  */
@@ -42,23 +41,28 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
   }
 
   try {
-    // 🌟 CHANGE 1: CORB PREVENTION LAYER
-    // Dynamically fetch the real authenticated User UUID token straight from the active session
-    const { data: { user }, error: authError } = await activeClient.auth.getUser();
+    // 🌟 CORRECTED CORB PREVENTION LAYER: Retrieve the true database UUID cached during login
+    let userUuid = localStorage.getItem('supabase_auth_user_uuid');
 
-    if (authError || !user) {
+    // Fallback look up to network session if local memory was cleared
+    if (!userUuid) {
+        const { data: { user } } = await activeClient.auth.getUser();
+        if (user) userUuid = user.id;
+    }
+
+    if (!userUuid || userUuid === 'undefined') {
         return { success: false, error: "Authentication session loading... Please try again in 1 second." };
     }
 
-    // 🌟 CHANGE 2: MAP TO YOUR SECURE DASHBOARD TABLE
+    // 🌟 MAP TO YOUR SECURE DASHBOARD TABLE
     const { data, error } = await activeClient
-      .from('intents') // Changed from 'student_genesis_ledger' to match your Supabase schema
+      .from('intents') // Maps cleanly to your established dashboard table schema
       .insert([
         { 
-          user_id: user.id,                // Passes the required secure account UUID token instead of plain text
-          creator_name: studentId,         // Stores your visual portal label ("StU-01") safely
-          project_title: projectTitle,     // Maps your form input
-          human_genesis: genesisSparkText, // Stores your Human Genesis baseline text
+          user_id: userUuid,               // Passes the secure system identifier UUID string
+          creator_name: studentId,         // Stores your visual profile name ("StU-01") safely
+          project_title: projectTitle,     // Maps form input
+          human_genesis: genesisSparkText, // Stores your Human Genesis outline parameters
           status: 'queued_for_worker_ai'
         }
       ]);
@@ -73,4 +77,6 @@ window.commitStudentGenesisToCloud = async function(studentId, projectTitle, gen
 
 // ✅ KEEP THIS AS THE ABSOLUTE BOTTOM: Bridges the naming gap perfectly
 window.saveGenesisLedger = window.commitStudentGenesisToCloud;
+
+
 
