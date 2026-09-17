@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🛡️ Intake Workspace - Fair Judgment Portal</title>
   
-  <!-- 1. CORRECTED: Loads the true Supabase client engine via CDN -->
-  <script src="https://unpkg.com"></script>
+  <!-- 1. The classic, rock-solid Supabase CDN link -->
+  <script src="https://jsdelivr.net"></script>
   
-  <!-- 2. Loads your local database connection module configuration -->
+  <!-- 2. Your local database connection module configuration -->
   <script src="./database.js"></script>
+</head>
 
   <style>
     body { background-color: #0d1117; color: #c9d1d9; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; padding: 40px 20px; margin: 0; }
@@ -64,10 +65,9 @@
     <!-- TRANSACTION STATUS LOGGER ELEMENT -->
     <div class="status-msg" id="status-display"></div>
   </div>
-
-   <!-- RUNTIME APPLICATION FRAMEWORK LOGIC -->
+  <!-- RUNTIME APPLICATION FRAMEWORK LOGIC -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       // 1. Gather validated credential cache
       const sessionStudentId = localStorage.getItem('authenticated_student_id') || 'StU-01'; 
       
@@ -100,56 +100,25 @@
             statusDisplay.style.color = "#58a6ff";
           }
 
-                          try {
-            // 1. ADVANCED TIMING RECOVERY: Scan all possible layers for the active client
-            let clientInstance = window.supabase;
-            if (!clientInstance && typeof supabase !== 'undefined') {
-              clientInstance = supabase;
-            }
+          try {
+            // 4. Trace available connection wrappers inside your database.js module architecture
+            const dbFunction = window.saveGenesisLedger || 
+                               window.commitStudentGenesisToCloud ||
+                               (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null);
 
-            // 2. SELF-HEALING FALLBACK: If scripts loaded out of order, force-initialize on the spot
-            if (!clientInstance && typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined') {
-              // This leverages the CDN library directly if database.js hasn't attached yet
-              if (window.supabase && window.supabase.createClient) {
-                clientInstance = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-              }
-            }
-
-            // If completely uninitialized, show the alert and wait for the file stream
-            if (!clientInstance) {
+            if (!dbFunction) {
+              // Automatically triggers if database.js configuration variables haven't linked completely
               if (statusDisplay) {
                 statusDisplay.textContent = "Connecting to Fair Judgment secure ledger... Please retry in 1 second.";
                 statusDisplay.style.color = "#ffb300";
               }
-              return; 
-            }
-
-            // 3. Fetch the authenticated user state directly from your verified client instance
-            const { data: { user }, error: authError } = await clientInstance.auth.getUser();
-
-            // If the user is missing, fallback gracefully
-            if (authError || !user) {
-              if (statusDisplay) {
-                statusDisplay.textContent = "Error: Authenticating session... Please click again in 1 second.";
-                statusDisplay.style.color = "#ffb300"; 
-              }
-              return; 
-            }
-
-            // 4. Trace available global connection wrappers inside database.js
-            const dbFunction = window.saveGenesisLedger || 
-                               window.commitGenesisLedger || 
-                               (typeof saveGenesisLedger === 'function' ? saveGenesisLedger : null) ||
-                               (typeof commitGenesisLedger === 'function' ? commitGenesisLedger : null);
-
-            if (!dbFunction) {
-              throw new Error("Transactional engine entry points not found in database.js context.");
+              return;
             }
 
             // 5. Fire operational commit request payload passing the parameters
-            const result = await dbFunction(projectTitle, genesisSparkText);
+            const result = await dbFunction(sessionStudentId, projectTitle, genesisSparkText);
 
-                       if (result && result.success) {
+            if (result && result.success) {
               if (statusDisplay) {
                 statusDisplay.textContent = "✓ Intent successfully anchored in isolated worker layer queue.";
                 statusDisplay.style.color = "#238636";
@@ -158,30 +127,22 @@
               if (sparkInput) sparkInput.value = '';
             } else {
               throw new Error(result ? result.error : "Unknown connection fault configuration parameter.");
-            } // Closes the else block safely
+            }
           } catch (err) {
             console.error("Workspace submission runtime execution failure:", err.message);
             
-            // CHECK: If the error happened because the student isn't fully loaded yet
-            if (err && err.message && err.message.includes("undefined")) {
-                if (statusDisplay) {
-                    statusDisplay.textContent = "Error: Authenticating session... Please click again in 1 second.";
-                    statusDisplay.style.color = "#ffb300"; // Friendly warning orange
-                }
-            } else {
-                // Your exact untouched error display logic for true network issues
-                if (statusDisplay) {
-                    statusDisplay.textContent = `Error: ${err ? err.message : 'Unknown error'}`;
-                    statusDisplay.style.color = "#f85149"; // Your original error red
-                }
+            if (statusDisplay) {
+                statusDisplay.textContent = `Error: ${err ? err.message : 'Unknown error'}`;
+                statusDisplay.style.color = "#f85149"; // Your original error red
             }
-          } // This explicitly closes the catch block cleanly
-        }); // This closes your submit event listener
-      } // This closes the submitButton check
-    }); // This closes the DOMContentLoaded container
+          } 
+        });
+      }
+    });
   </script>
 </body>
 </html>
+
 
 
 
