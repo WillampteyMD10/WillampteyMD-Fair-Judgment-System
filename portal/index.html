@@ -72,7 +72,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
           .eq('secure_passcode', passcode)
           .limit(1); // <--- Pulls a safe array (max 1 item). Never throws a 406!
 
-                      if (error) {
+                            if (error) {
           throw new Error(error.message);
         }
 
@@ -84,19 +84,21 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // Extract the user data safely from the array
         const user = data[0];
 
-        // 🌟 THE CRITICAL FIX: Explicitly cache the user profile ID so dashboard.html can read it!
-        if (user && user.id) {
+        // 🌟 AUTO-DETECT IDENTIFIER COLUMNS: Look for id, user_id, uuid, or student_id dynamically
+        const systemUuid = user.id || user.user_id || user.uuid || user.student_id;
+
+        if (systemUuid) {
           localStorage.setItem('authenticated_student_id', user.student_id || 'StU-01');
-          localStorage.setItem('supabase_auth_user_uuid', user.id); // Bridges the database gap
+          localStorage.setItem('supabase_auth_user_uuid', systemUuid); // Securely bridges the database gap
           
-          // Routes cleanly passing the true database UUID to clear the 'undefined' bug completely!
-          window.location.href = `./portal/dashboard.html?user=${user.id}`;
+          // Routes cleanly passing the true system identifier to clear the 'undefined' bug completely!
+          window.location.href = `./portal/dashboard.html?user=${systemUuid}`;
         } else {
-          throw new Error("User record missing a valid system identifier node.");
+          throw new Error("User record missing a valid system identifier node. System check failed.");
         }
 
       } catch (err) {
-        authBtn.innerText = "Authenticate Session";
+         authBtn.innerText = "Authenticate Session";
         authBtn.style.background = "#238636";
         errorBox.style.display = 'block';
         errorBox.innerText = err.message;
