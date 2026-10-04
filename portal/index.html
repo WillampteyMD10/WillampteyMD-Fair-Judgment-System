@@ -123,6 +123,13 @@ localStorage.setItem(
 );
 
 window.location.href = `./portal/dashboard.html?user=${authData.user.id}`;
+
+} catch (err) {
+  authBtn.innerText = "Authenticate Session";
+  authBtn.style.background = "#238636";
+  errorBox.style.display = 'block';
+  errorBox.innerText = err.message;
+}
     });
   </script>
 </body>
