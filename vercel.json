@@ -15,5 +15,11 @@
       "source": "/portal/ledger-review",
       "destination": "/portal/ledger-review.html"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/worker",
+      "schedule": "*/5 * * * *"
+    }
   ]
 }
