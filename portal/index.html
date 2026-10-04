@@ -67,7 +67,7 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // Query using a clean array limit to bypass single/maybeSingle entirely
         const { data, error } = await supabaseClient
           .from('student_credentials')
-          .select('student_id, secure_passcode')
+          .select('id, student_id, secure_passcode')
           .eq('student_id', studentId)
           .eq('secure_passcode', passcode)
           .limit(1); // <--- Pulls a safe array (max 1 item). Never throws a 406!
