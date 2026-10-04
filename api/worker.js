@@ -11,6 +11,7 @@ import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = process.env.SUPABASE_URL || null;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || null;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || null;
+const CRON_SECRET = process.env.CRON_SECRET || null;
 
 const OPENAI_MODEL = 'gpt-6-luna';
 
@@ -57,6 +58,23 @@ async function generateIntentHash(title, creator, genesis) {
 
 export default async function handler(req, res) {
   try {
+    // Protect the Worker endpoint.
+    if (!CRON_SECRET) {
+      return res.status(500).json({
+        ok: false,
+        message: 'CRON_SECRET not set in environment'
+      });
+    }
+
+    const authorization = req.headers.authorization || '';
+
+    if (authorization !== `Bearer ${CRON_SECRET}`) {
+      return res.status(401).json({
+        ok: false,
+        message: 'Unauthorized'
+      });
+    }
+
     if (req.method !== 'GET' && req.method !== 'POST') {
       return res.status(405).json({
         ok: false,
