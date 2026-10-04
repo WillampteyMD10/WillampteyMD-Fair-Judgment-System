@@ -103,13 +103,12 @@ export default async function handler(req, res) {
     );
 
     // 1. Get the oldest queued intent.
-    const { data: intent, error: intentError } = await supabase
+    const { data: intents, error: intentError } = await supabase
       .from('intents')
       .select('*')
       .eq('status', 'queued_for_worker_ai')
       .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle();
+      .limit(1);
 
     if (intentError) {
       console.error('Worker intent query error:', intentError);
@@ -120,6 +119,13 @@ export default async function handler(req, res) {
         error: intentError.message
       });
     }
+
+    console.log(
+      'Worker queued intent count:',
+      intents?.length || 0
+    );
+
+    const intent = intents?.[0] || null;
 
     if (!intent) {
       return res.status(200).json({
