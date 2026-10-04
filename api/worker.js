@@ -31,7 +31,8 @@ async function runOpenAI(input) {
 
   if (!response.ok) {
     throw new Error(
-      body?.error?.message || `OpenAI request failed with status ${response.status}`
+      body?.error?.message ||
+      `OpenAI request failed with status ${response.status}`
     );
   }
 
@@ -43,7 +44,8 @@ async function runOpenAI(input) {
 }
 
 async function generateIntentHash(title, creator, genesis) {
-  const source = `${title}|${creator}|${genesis}`;
+  const source =
+    `${title.trim()}:${creator.trim()}:${genesis.trim()}:${new Date().toISOString().split('T')[0]}`;
 
   const encoded = new TextEncoder().encode(source);
   const digest = await crypto.subtle.digest('SHA-256', encoded);
@@ -65,7 +67,8 @@ export default async function handler(req, res) {
     if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
       return res.status(500).json({
         ok: false,
-        message: 'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set in environment'
+        message:
+          'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY not set in environment'
       });
     }
 
@@ -165,20 +168,22 @@ export default async function handler(req, res) {
     );
 
     // 5. Write the completed certification.
-    const { data: certification, error: certificationError } =
-      await supabase
-        .from('fair_judgments')
-        .insert([{
-          project_title: intent.project_title,
-          creator_name: intent.creator_name,
-          human_genesis: intent.human_genesis,
-          worker_ai: workerAI,
-          detective_verdict: detectiveVerdict,
-          intent_hash: intentHash,
-          certified_at: new Date().toISOString()
-        }])
-        .select()
-        .single();
+    const {
+      data: certification,
+      error: certificationError
+    } = await supabase
+      .from('fair_judgments')
+      .insert([{
+        project_title: intent.project_title,
+        creator_name: intent.creator_name,
+        human_genesis: intent.human_genesis,
+        worker_ai: workerAI,
+        detective_verdict: detectiveVerdict,
+        intent_hash: intentHash,
+        certified_at: new Date().toISOString()
+      }])
+      .select()
+      .single();
 
     if (certificationError) {
       console.error(
@@ -188,7 +193,8 @@ export default async function handler(req, res) {
 
       return res.status(500).json({
         ok: false,
-        message: 'AI analysis completed but certification write failed',
+        message:
+          'AI analysis completed but certification write failed',
         error: certificationError.message,
         intent_id: intent.id
       });
@@ -210,7 +216,8 @@ export default async function handler(req, res) {
 
       return res.status(500).json({
         ok: false,
-        message: 'Certification created but intent status update failed',
+        message:
+          'Certification created but intent status update failed',
         error: updateError.message,
         intent_id: intent.id,
         certification_id: certification.id
