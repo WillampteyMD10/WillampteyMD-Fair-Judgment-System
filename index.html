@@ -111,10 +111,19 @@
             const w = document.getElementById('workerAI').value;
             const dv = document.getElementById('detectiveVerdict').value;
             try {
-                const hash = await generateIntentHash(t, c, g);
-                // Insert a certified record into the Supabase table. Adjust column names if your schema differs.
-                const { data, error } = await dbClient.from('fair_judgments').insert([{ project_title: t, creator_name: c, human_genesis: g, worker_ai: w, detective_verdict: dv, intent_hash: hash, certified: true, certified_at: new Date().toISOString() }]);
-                if (error) throw error;
+              const hash = await generateIntentHash(t, c, g);
+
+const { data, error } = await dbClient.from('fair_judgments').insert([{
+    project_title: t,
+    creator_name: c,
+    human_genesis: g,
+    worker_ai: w,
+    detective_verdict: dv,
+    intent_hash: hash,
+    certified_at: new Date().toISOString()
+}]);
+
+if (error) throw error;
                 statusBox.style.backgroundColor = 'rgba(74, 222, 128, 0.1)';
                 statusBox.style.color = '#4ade80';
                 statusBox.innerHTML = `🛡️ Intent Layer Certified!<br><span style="font-size:0.75rem; font-family:monospace; color:#cbd5e1;">Hash: ${hash.substring(0, 32)}...</span>`;
