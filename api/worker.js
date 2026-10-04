@@ -102,6 +102,15 @@ export default async function handler(req, res) {
       SUPABASE_SERVICE_ROLE_KEY
     );
 
+    // Diagnostic: see whether the Worker can see any intents at all.
+    const { data: debugIntents, error: debugIntentError } = await supabase
+      .from('intents')
+      .select('id,status')
+      .limit(10);
+
+    console.log('Worker debug intents:', debugIntents);
+    console.log('Worker debug intents error:', debugIntentError);
+
     // 1. Get the oldest queued intent.
     const { data: intents, error: intentError } = await supabase
       .from('intents')
