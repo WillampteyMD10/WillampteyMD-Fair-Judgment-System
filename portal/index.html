@@ -52,12 +52,17 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const studentId = document.getElementById('studentId').value.trim();
-      const passcode = document.getElementById('passcode').value.trim();
-      const errorBox = document.getElementById('errorBox');
-      const authBtn = document.getElementById('authBtn');
+   document.getElementById('loginForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const studentId = document.getElementById('studentId').value.trim();
+  const passcode = document.getElementById('passcode').value.trim();
+
+  console.log("LOGIN DEBUG studentId:", JSON.stringify(studentId));
+  console.log("LOGIN DEBUG passcode length:", passcode ? passcode.length : 0);
+
+  const errorBox = document.getElementById('errorBox');
+  const authBtn = document.getElementById('authBtn');
       
       errorBox.style.display = 'none';
       authBtn.innerText = "Querying Database Layers...";
