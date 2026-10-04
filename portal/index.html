@@ -84,25 +84,45 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         // Extract the user data safely from the array
         const user = data[0];
 
-        // 🌟 AUTO-DETECT IDENTIFIER COLUMNS: Look for id, user_id, uuid, or student_id dynamically
-        const systemUuid = user.id || user.user_id || user.uuid || user.student_id;
+      // Authenticate this student through Supabase Auth
+const authEmailMap = {
+  "StU-10": "lampteyw101010@gmail.com",
+  "WMD-2026-TEST": "lampian1010@gmail.com"
+};
 
-        if (systemUuid) {
-          localStorage.setItem('authenticated_student_id', user.student_id || 'StU-01');
-          localStorage.setItem('supabase_auth_user_uuid', systemUuid); // Securely bridges the database gap
-          
-          // Routes cleanly passing the true system identifier to clear the 'undefined' bug completely!
-          window.location.href = `./portal/dashboard.html?user=${systemUuid}`;
-        } else {
-          throw new Error("User record missing a valid system identifier node. System check failed.");
-        }
+const authEmail = authEmailMap[user.student_id];
 
-      } catch (err) {
-         authBtn.innerText = "Authenticate Session";
-        authBtn.style.background = "#238636";
-        errorBox.style.display = 'block';
-        errorBox.innerText = err.message;
-      }
+if (!authEmail) {
+  throw new Error("No Supabase Auth identity is mapped to this student.");
+}
+
+// IMPORTANT: this requires the Supabase Auth password
+// associated with the Auth user.
+const { data: authData, error: authError } =
+  await supabaseClient.auth.signInWithPassword({
+    email: authEmail,
+    password: passcode
+  });
+
+if (authError) {
+  throw new Error(`Supabase Auth login failed: ${authError.message}`);
+}
+
+if (!authData.user) {
+  throw new Error("Supabase Auth returned no authenticated user.");
+}
+
+localStorage.setItem(
+  'authenticated_student_id',
+  user.student_id
+);
+
+localStorage.setItem(
+  'supabase_auth_user_uuid',
+  authData.user.id
+);
+
+window.location.href = `./portal/dashboard.html?user=${authData.user.id}`;
     });
   </script>
 </body>
